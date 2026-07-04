@@ -36,12 +36,6 @@
 
     <div class="section">
         <h2>📈 月度總銷售額</h2>
-        <div class="summary-cards" id="s1GmvTotalCard">
-            <div class="card">
-                <div class="card-label">💰 GMV 總計</div>
-                <div class="card-value" id="s1GmvTotal">$0.00</div>
-            </div>
-        </div>
         <div class="summary-cards" id="summaryCards"></div>
         <div class="filter-bar">
             <label>月份 Month:</label>
@@ -64,13 +58,7 @@
     </div>
 
     <div class="section">
-        <h2>🏪 By Store Month GMV (with MoM 升/跌幅)</h2>
-        <div class="summary-cards" id="s2GmvTotalCard">
-            <div class="card">
-                <div class="card-label">💰 GMV 總計</div>
-                <div class="card-value" id="s2GmvTotal">$0.00</div>
-            </div>
-        </div>
+        <h2>🏪 店鋪每月銷售額</h2>
         <div class="filter-bar">
             <label>店鋪 Store:</label>
             <select id="storeSelect">
@@ -96,13 +84,7 @@
     </div>
 
     <div class="section">
-        <h2>🏆 Top 10 Merchants per Month GMV</h2>
-        <div class="summary-cards" id="s3GmvTotalCard">
-            <div class="card">
-                <div class="card-label">💰 GMV 總計</div>
-                <div class="card-value" id="s3GmvTotal">$0.00</div>
-            </div>
-        </div>
+        <h2>🏆 排名最高50間店</h2>
         <div class="filter-bar">
             <label>月份 Month:</label>
             <select id="topMonthSelect"><option value="2026-07">2026-07</option></select>
@@ -123,13 +105,7 @@
     </div>
 
     <div class="section">
-        <h2>📉 Low 10 Merchants per Month GMV</h2>
-        <div class="summary-cards" id="s4GmvTotalCard">
-            <div class="card">
-                <div class="card-label">💰 GMV 總計</div>
-                <div class="card-value" id="s4GmvTotal">$0.00</div>
-            </div>
-        </div>
+        <h2>📉 排名最差50間店</h2>
         <div class="filter-bar">
             <label>月份 Month:</label>
             <select id="lowMonthSelect"><option value="2026-07">2026-07</option></select>
@@ -151,7 +127,7 @@
 
     
     <div class="section">
-        <h2>🏪 By Store Month + 商戶資料 (Target / Non Target / Contract / Payment / Color / VIP / FS)</h2>
+        <h2>🏪 商戶資料</h2>
         <div class="filter-bar">
             
             <label>店鋪 Store:</label>
@@ -482,7 +458,6 @@
                 const runRate = m.GMV > 0 ? ((m.GMV / TARGET_GMV) * 100).toFixed(1) : '0.0';
                 return `<tr><td>${m.month}</td><td class="num">${formatNum(m.GMV)}</td><td class="num">${formatNum(TARGET_GMV)}</td><td class="num">${runRate}%</td><td class="num">${m.store_count}</td><td class="num">${formatMom(m.mom_change)}</td></tr>`;
             }).join('');
-            document.getElementById('s1GmvTotal').textContent = formatNum(totalGMV);
         }
 
         function renderStoreMonthly() {
@@ -524,7 +499,6 @@
                     <td class="num">${formatMom(s.mom_change)}</td>
                 </tr>
             `).join('');
-            document.getElementById('s2GmvTotal').textContent = formatNum(totalGMV);
         }
 
         function renderTopMerchants() {
@@ -559,7 +533,6 @@
                     <td class="num">${formatNum(t.GMV)}</td>
                 </tr>
             `).join('');
-            document.getElementById('s3GmvTotal').textContent = formatNum(totalGMV);
         }
 
         function renderLowMerchants() {
@@ -594,7 +567,6 @@
                     <td class="num">${formatNum(t.GMV)}</td>
                 </tr>
             `).join('');
-            document.getElementById('s4GmvTotal').textContent = formatNum(totalGMV);
         }
 
 
