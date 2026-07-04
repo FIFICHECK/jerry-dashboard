@@ -40,12 +40,6 @@
     <!-- Section 1: By Month -->
     <div class="section">
         <h2>📈 月度總銷售額</h2>
-        <div class="summary-cards" id="s1GmvTotalCard">
-            <div class="card">
-                <div class="card-label">💰 GMV 總計</div>
-                <div class="card-value" id="s1GmvTotal">$0.00</div>
-            </div>
-        </div>
         <div class="summary-cards" id="summaryCards"></div>
         <div class="filter-bar">
             <label>年份 Year:</label>
@@ -78,12 +72,6 @@
 
     <div class="section">
         <h2>🏪 店鋪每月銷售額</h2>
-        <div class="summary-cards" id="s2GmvTotalCard">
-            <div class="card">
-                <div class="card-label">💰 GMV 總計</div>
-                <div class="card-value" id="s2GmvTotal">$0.00</div>
-            </div>
-        </div>
         <div class="filter-bar">
             <label>年份 Year:</label>
             <select id="s2Year">
@@ -116,12 +104,6 @@
 
     <div class="section">
         <h2>🏆 排名最高的50間店</h2>
-        <div class="summary-cards" id="s3GmvTotalCard">
-            <div class="card">
-                <div class="card-label">💰 GMV 總計</div>
-                <div class="card-value" id="s3GmvTotal">$0.00</div>
-            </div>
-        </div>
         <div class="filter-bar">
             <label>年份 Year:</label>
             <select id="s3Year">
@@ -159,12 +141,6 @@
 
     <div class="section">
         <h2>📉 排名最差的50間店</h2>
-        <div class="summary-cards" id="s4GmvTotalCard">
-            <div class="card">
-                <div class="card-label">💰 GMV 總計</div>
-                <div class="card-value" id="s4GmvTotal">$0.00</div>
-            </div>
-        </div>
         <div class="filter-bar">
             <label>年份 Year:</label>
             <select id="s4Year">
@@ -201,20 +177,6 @@
     </div>
     <div class="section" id="section5">
         <h2>🏪 商戶資料</h2>
-        <div class="summary-cards" id="s5SummaryCards">
-            <div class="card">
-                <div class="card-label">💰 GMV 總計</div>
-                <div class="card-value" id="s5GmvTotal">$0.00</div>
-            </div>
-            <div class="card">
-                <div class="card-label">🐣 Early Bird 2025 總計</div>
-                <div class="card-value" id="s5EarlyBirdTotal">$0.00</div>
-            </div>
-            <div class="card">
-                <div class="card-label">🏪 商戶數量</div>
-                <div class="card-value" id="s5StoreCount">0</div>
-            </div>
-        </div>
         <div class="filter-bar">
             <label>年份 Year:</label>
             <select id="s5Year">
@@ -409,9 +371,18 @@
                     <td class="num">${formatMom(m.mom_change)}</td>
                 </tr>
             `).join('');
-            // Update GMV total for Section 1
+            // Add GMV total row
             const totalGmv = filtered.reduce((sum, m) => sum + m.GMV, 0);
-            document.getElementById('s1GmvTotal').textContent = formatNum(totalGmv);
+            const totalGP = filtered.reduce((sum, m) => sum + (m.GP || 0), 0);
+            tbody.innerHTML += `
+                <tr style="font-weight: bold; background: #1a3a5c;">
+                    <td>💰 總計</td>
+                    <td class="num">${formatNum(totalGmv)}</td>
+                    <td class="num">${formatNum(totalGP)}</td>
+                    <td class="num">${filtered.reduce((sum, m) => sum + m.store_count, 0)}</td>
+                    <td class="num">-</td>
+                </tr>
+            `;
         }
 
         function renderStoreMonthly() {
@@ -438,9 +409,15 @@
                     <td class="num">${formatMom(s.mom_change)}</td>
                 </tr>
             `).join('');
-            // Update GMV total for Section 2
+            // Add GMV total row
             const totalGmv = filtered.reduce((sum, s) => sum + s.GMV, 0);
-            document.getElementById('s2GmvTotal').textContent = formatNum(totalGmv);
+            tbody.innerHTML += `
+                <tr style="font-weight: bold; background: #1a3a5c;">
+                    <td colspan="2">💰 總計</td>
+                    <td class="num">${formatNum(totalGmv)}</td>
+                    <td class="num">-</td>
+                </tr>
+            `;
         }
 
         function renderTopMerchants() {
@@ -478,9 +455,14 @@
                 '<td class="store-name" title="' + (t.primary_store_name_chi || '') + '">' + (t.primary_store_name_chi || 'N/A') + '</td>' +
                 '<td class="num">' + formatNum(t.GMV) + '</td>' +
             '</tr>').join('');
-            // Update GMV total for Section 3
+            // Add GMV total row
             const totalGmv = top50.reduce((sum, t) => sum + t.GMV, 0);
-            document.getElementById('s3GmvTotal').textContent = formatNum(totalGmv);
+            tbody.innerHTML += `
+                <tr style="font-weight: bold; background: #1a3a5c;">
+                    <td colspan="3">💰 總計</td>
+                    <td class="num">${formatNum(totalGmv)}</td>
+                </tr>
+            `;
         }
 
         function renderLowMerchants() {
@@ -518,9 +500,14 @@
                 '<td class="store-name" title="' + (t.primary_store_name_chi || '') + '">' + (t.primary_store_name_chi || 'N/A') + '</td>' +
                 '<td class="num">' + formatNum(t.GMV) + '</td>' +
             '</tr>').join('');
-            // Update GMV total for Section 4
+            // Add GMV total row
             const totalGmv = low50.reduce((sum, t) => sum + t.GMV, 0);
-            document.getElementById('s4GmvTotal').textContent = formatNum(totalGmv);
+            tbody.innerHTML += `
+                <tr style="font-weight: bold; background: #1a3a5c;">
+                    <td colspan="3">💰 總計</td>
+                    <td class="num">${formatNum(totalGmv)}</td>
+                </tr>
+            `;
         }
 
         document.getElementById('s1Year').addEventListener('change', () => { renderSummaryCards(); renderMonthTotal(); });
@@ -633,11 +620,6 @@
             }, 0);
             const storeCount = filtered.length;
 
-            // Update summary cards
-            document.getElementById('s5GmvTotal').textContent = formatNum(totalGmv);
-            document.getElementById('s5EarlyBirdTotal').textContent = formatNum(totalEarlyBird);
-            document.getElementById('s5StoreCount').textContent = storeCount.toLocaleString();
-
             tbody.innerHTML = filtered.map(s => {
                 const storeId = s.primary_store_code;
                 const c = contactData[storeId] || {};
@@ -658,6 +640,24 @@
                     '<td>' + (c.join_fs || '-') + '</td>' +
                 '</tr>';
             }).join('');
+
+            // Add total row
+            tbody.innerHTML += `
+                <tr style="font-weight: bold; background: #1a3a5c;">
+                    <td colspan="2">💰 總計 (${storeCount} 間)</td>
+                    <td class="num">${formatNum(totalGmv)}</td>
+                    <td class="num">-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td class="num">${formatNum(totalEarlyBird)}</td>
+                    <td>-</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+            `;
         }
 
 
