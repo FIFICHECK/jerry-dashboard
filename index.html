@@ -388,44 +388,34 @@
             const endMonthSelect = document.getElementById('topEndMonth');
             const yearSelect = document.getElementById('s3Year');
             const tbody = document.querySelector('#topTable tbody');
-            const startMonth = startMonthSelect.value;
-            const endMonth = endMonthSelect.value;
-            const selectedYear = yearSelect.value;
-            
-            // Filter by year first
-            let filtered = filterByYear(topData, selectedYear);
-            
+            const startMonth = startMonthSelect ? startMonthSelect.value : '';
+            const endMonth = endMonthSelect ? endMonthSelect.value : '';
+            const selectedYear = yearSelect ? yearSelect.value : '';
+
+            // Filter storeData by year first
+            let filtered = storeData;
+            if (selectedYear) {
+                filtered = filtered.filter(s => s.month && s.month.startsWith(selectedYear));
+            }
+
             // Aggregate GMV by store if range is selected
             let aggregated;
             if (startMonth || endMonth) {
                 aggregated = aggregateByStore(filtered, startMonth, endMonth);
                 aggregated.sort((a, b) => b.GMV - a.GMV);
             } else {
-                // No range, just filter by single month if selected
-                if (startMonth) {
-                    aggregated = aggregated || [];
-                    filtered.forEach(t => {
-                        if (t.month === startMonth) {
-                            if (!aggregated.find(a => a.primary_store_code === t.primary_store_code)) {
-                                aggregated.push(t);
-                            }
-                        }
-                    });
-                } else {
-                    aggregated = filtered;
-                }
+                // No range, just use all filtered data
+                aggregated = filtered;
             }
-            
+
             // Take top 50
             const top50 = aggregated.slice(0, 50);
-            tbody.innerHTML = top50.map((t, i) => `
-                <tr>
-                    <td><span class="top-badge">#${i + 1}</span></td>
-                    <td>${t.primary_store_code || 'N/A'}</td>
-                    <td class="store-name" title="${t.primary_store_name_chi || ''}">${t.primary_store_name_chi || 'N/A'}</td>
-                    <td class="num">${formatNum(t.GMV)}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = top50.map((t, i) => '<tr>' +
+                '<td><span class="top-badge">#' + (i + 1) + '</span></td>' +
+                '<td>' + (t.primary_store_code || 'N/A') + '</td>' +
+                '<td class="store-name" title="' + (t.primary_store_name_chi || '') + '">' + (t.primary_store_name_chi || 'N/A') + '</td>' +
+                '<td class="num">' + formatNum(t.GMV) + '</td>' +
+            '</tr>').join('');
         }
 
         function renderLowMerchants() {
@@ -433,44 +423,34 @@
             const endMonthSelect = document.getElementById('lowEndMonth');
             const yearSelect = document.getElementById('s4Year');
             const tbody = document.querySelector('#lowTable tbody');
-            const startMonth = startMonthSelect.value;
-            const endMonth = endMonthSelect.value;
-            const selectedYear = yearSelect.value;
-            
-            // Filter by year first
-            let filtered = filterByYear(lowData, selectedYear);
-            
+            const startMonth = startMonthSelect ? startMonthSelect.value : '';
+            const endMonth = endMonthSelect ? endMonthSelect.value : '';
+            const selectedYear = yearSelect ? yearSelect.value : '';
+
+            // Filter storeData by year first
+            let filtered = storeData;
+            if (selectedYear) {
+                filtered = filtered.filter(s => s.month && s.month.startsWith(selectedYear));
+            }
+
             // Aggregate GMV by store if range is selected
             let aggregated;
             if (startMonth || endMonth) {
                 aggregated = aggregateByStore(filtered, startMonth, endMonth);
                 aggregated.sort((a, b) => a.GMV - b.GMV);
             } else {
-                // No range, just filter by single month if selected
-                if (startMonth) {
-                    aggregated = aggregated || [];
-                    filtered.forEach(t => {
-                        if (t.month === startMonth) {
-                            if (!aggregated.find(a => a.primary_store_code === t.primary_store_code)) {
-                                aggregated.push(t);
-                            }
-                        }
-                    });
-                } else {
-                    aggregated = filtered;
-                }
+                // No range, just use all filtered data
+                aggregated = filtered;
             }
-            
+
             // Take low 50
             const low50 = aggregated.slice(0, 50);
-            tbody.innerHTML = low50.map((t, i) => `
-                <tr>
-                    <td><span class="low-badge">#${i + 1}</span></td>
-                    <td>${t.primary_store_code || 'N/A'}</td>
-                    <td class="store-name" title="${t.primary_store_name_chi || ''}">${t.primary_store_name_chi || 'N/A'}</td>
-                    <td class="num">${formatNum(t.GMV)}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = low50.map((t, i) => '<tr>' +
+                '<td><span class="low-badge">#' + (i + 1) + '</span></td>' +
+                '<td>' + (t.primary_store_code || 'N/A') + '</td>' +
+                '<td class="store-name" title="' + (t.primary_store_name_chi || '') + '">' + (t.primary_store_name_chi || 'N/A') + '</td>' +
+                '<td class="num">' + formatNum(t.GMV) + '</td>' +
+            '</tr>').join('');
         }
 
         document.getElementById('s1Year').addEventListener('change', () => { renderSummaryCards(); renderMonthTotal(); });
