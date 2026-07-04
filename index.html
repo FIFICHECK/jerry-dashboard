@@ -199,6 +199,18 @@
             <label>合約到期月:</label>
             <select id="s5ContractMonth">
                 <option value="">全部 All</option>
+                <option value="01">01 Jan</option>
+                <option value="02">02 Feb</option>
+                <option value="03">03 Mar</option>
+                <option value="04">04 Apr</option>
+                <option value="05">05 May</option>
+                <option value="06">06 Jun</option>
+                <option value="07">07 Jul</option>
+                <option value="08">08 Aug</option>
+                <option value="09">09 Sep</option>
+                <option value="10">10 Oct</option>
+                <option value="11">11 Nov</option>
+                <option value="12">12 Dec</option>
             </select>
             <label>Payment Term:</label>
             <select id="s5Payment">
@@ -215,6 +227,8 @@
             <label>Early Bird:</label>
             <select id="s5EarlyBird">
                 <option value="">全部 All</option>
+                <option value="has_value">有數值</option>
+                <option value="no_value">無數值</option>
             </select>
             <label>API Store:</label>
             <select id="s5Api">
@@ -530,11 +544,15 @@
                     const storeId = s.primary_store_code;
                     const c = contactData[storeId] || {};
                     if (selectedTarget && c.target_non !== selectedTarget) return false;
-                    if (selectedContractMonth && !c.contract_yyyy_mm.startsWith(selectedContractMonth)) return false;
+                    if (selectedContractMonth) {
+                        const contractMonth = c.contract_end ? c.contract_end.substring(5, 7) : '';
+                        if (contractMonth !== selectedContractMonth) return false;
+                    }
                     if (selectedPayment && c.payment_term !== selectedPayment) return false;
                     if (selectedColor && c.color_tape !== selectedColor) return false;
                     if (selectedContractType && c.contract_type !== selectedContractType) return false;
-                    if (selectedEarlyBird && c.early_bird !== selectedEarlyBird) return false;
+                    if (selectedEarlyBird === 'has_value' && !c.early_bird) return false;
+                    if (selectedEarlyBird === 'no_value' && c.early_bird) return false;
                     if (selectedApi === 'API' && c.api_store !== 'API') return false;
                     if (selectedApi === 'non-api' && c.api_store === 'API') return false;
                     if (selectedVip === 'Y' && c.join_vip !== 'Y') return false;
@@ -585,6 +603,26 @@
             populateDropdown('s5Color', 'color_tape', 'Color Tape');
             populateDropdown('s5ContractType', 'contract_type', '合約類型');
             populateDropdown('s5EarlyBird', 'early_bird', 'Early Bird');
+
+            // Populate s5Store dropdown with store codes from contactData
+            const storeSel = document.getElementById('s5Store');
+            const storeCodes = [...new Set(Object.keys(contactData))].sort();
+            storeCodes.forEach(code => {
+                const opt = document.createElement('option');
+                opt.value = code;
+                opt.textContent = code;
+                storeSel.appendChild(opt);
+            });
+
+            // Populate s5Month dropdown with unique months from storeData
+            const monthSel = document.getElementById('s5Month');
+            const months = [...new Set(storeData.map(s => s.month).filter(m => m))].sort().reverse();
+            months.forEach(m => {
+                const opt = document.createElement('option');
+                opt.value = m;
+                opt.textContent = m;
+                monthSel.appendChild(opt);
+            });
 
         document.getElementById('s5Year').addEventListener('change', renderStoreContact);
         document.getElementById('s5Store').addEventListener('change', renderStoreContact);
