@@ -175,6 +175,20 @@
     </div>
     <div class="section" id="section5">
         <h2>🏪 商戶資料</h2>
+        <div class="summary-cards" id="s5SummaryCards">
+            <div class="card">
+                <div class="card-label">GMV 總計</div>
+                <div class="card-value" id="s5GmvTotal">$0.00</div>
+            </div>
+            <div class="card">
+                <div class="card-label">Early Bird 2025 總計</div>
+                <div class="card-value" id="s5EarlyBirdTotal">$0.00</div>
+            </div>
+            <div class="card">
+                <div class="card-label">商戶數量</div>
+                <div class="card-value" id="s5StoreCount">0</div>
+            </div>
+        </div>
         <div class="filter-bar">
             <label>年份 Year:</label>
             <select id="s5Year">
@@ -563,6 +577,20 @@
                 });
             }
             filtered = filtered.sort((a, b) => b.GMV - a.GMV);
+
+            // Calculate totals from filtered data
+            const totalGmv = filtered.reduce((sum, s) => sum + s.GMV, 0);
+            const totalEarlyBird = filtered.reduce((sum, s) => {
+                const c = contactData[s.primary_store_code] || {};
+                return sum + (c.early_bird || 0);
+            }, 0);
+            const storeCount = filtered.length;
+
+            // Update summary cards
+            document.getElementById('s5GmvTotal').textContent = formatNum(totalGmv);
+            document.getElementById('s5EarlyBirdTotal').textContent = formatNum(totalEarlyBird);
+            document.getElementById('s5StoreCount').textContent = storeCount.toLocaleString();
+
             tbody.innerHTML = filtered.map(s => {
                 const storeId = s.primary_store_code;
                 const c = contactData[storeId] || {};
