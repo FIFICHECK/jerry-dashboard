@@ -38,8 +38,14 @@
         <h2>📈 月度總銷售額</h2>
         <div class="summary-cards" id="summaryCards"></div>
         <div class="filter-bar">
+            <label>年份 Year:</label>
+            <select id="s1Year">
+                <option value="">全部 All</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
             <label>月份 Month:</label>
-            <select id="monthSelect"><option value="2026-07">2026-07</option></select>
+            <select id="monthSelect"><option value="">全部 All</option></select>
         </div>
         <div class="table-container">
             <table id="monthTotalTable">
@@ -60,13 +66,19 @@
     <div class="section">
         <h2>🏪 店鋪每月銷售額</h2>
         <div class="filter-bar">
+            <label>年份 Year:</label>
+            <select id="s2Year">
+                <option value="">全部 All</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
             <label>店鋪 Store:</label>
             <select id="storeSelect">
                 <option value="all">全部 All</option>
                 <option value="B0014001">B0014001</option><option value="B0217001">B0217001</option><option value="B0231002">B0231002</option><option value="B0231003">B0231003</option><option value="B0363002">B0363002</option><option value="B0501001">B0501001</option><option value="B0772001">B0772001</option><option value="B0961004">B0961004</option><option value="B0961005">B0961005</option><option value="B1102002">B1102002</option><option value="B1200001">B1200001</option><option value="B1252001">B1252001</option><option value="B1326001">B1326001</option><option value="B1346001">B1346001</option><option value="B1366001">B1366001</option><option value="B1463001">B1463001</option><option value="B1463002">B1463002</option><option value="B1463003">B1463003</option><option value="B1463004">B1463004</option><option value="B1561001">B1561001</option><option value="B1606001">B1606001</option><option value="B1608001">B1608001</option><option value="B1709001">B1709001</option><option value="B1709006">B1709006</option><option value="B1731001">B1731001</option><option value="B1742001">B1742001</option><option value="B1841001">B1841001</option><option value="B1870001">B1870001</option><option value="H0228001">H0228001</option><option value="H0389001">H0389001</option><option value="H0569001">H0569001</option><option value="H0569002">H0569002</option><option value="H0569003">H0569003</option><option value="H0623001">H0623001</option><option value="H0623003">H0623003</option><option value="H0623004">H0623004</option><option value="H0623006">H0623006</option><option value="H0623009">H0623009</option><option value="H0696023">H0696023</option><option value="H0883003">H0883003</option><option value="H0883004">H0883004</option><option value="H0883005">H0883005</option><option value="H5039001">H5039001</option><option value="H5039002">H5039002</option><option value="H5503001">H5503001</option><option value="H5503002">H5503002</option><option value="H5528001">H5528001</option><option value="H5528004">H5528004</option><option value="H5600001">H5600001</option><option value="H5859001">H5859001</option><option value="H5859004">H5859004</option><option value="H6092001">H6092001</option><option value="H6183001">H6183001</option><option value="H6521002">H6521002</option><option value="H6550001">H6550001</option><option value="H6588001">H6588001</option><option value="H6754001">H6754001</option><option value="H6754005">H6754005</option><option value="H6754006">H6754006</option><option value="H7047002">H7047002</option><option value="H7624002">H7624002</option><option value="H7650001">H7650001</option><option value="H7650002">H7650002</option><option value="H7650003">H7650003</option><option value="H7775001">H7775001</option><option value="H8024001">H8024001</option><option value="H8217001">H8217001</option><option value="H8427001">H8427001</option><option value="H8931001">H8931001</option><option value="H8931004">H8931004</option><option value="H9002002">H9002002</option><option value="H9308001">H9308001</option><option value="H9308002">H9308002</option><option value="H9407001">H9407001</option><option value="H9776001">H9776001</option><option value="P0034002">P0034002</option><option value="P0143002">P0143002</option><option value="S2347001">S2347001</option><option value="S2818002">S2818002</option><option value="S2818003">S2818003</option><option value="S6258001">S6258001</option><option value="S6383001">S6383001</option><option value="S6477001">S6477001</option><option value="S6501001">S6501001</option><option value="S9002001">S9002001</option>
             </select>
             <label>月份 Month:</label>
-            <select id="storeMonthSelect"><option value="2026-07">2026-07</option></select>
+            <select id="storeMonthSelect"><option value="">全部 All</option></select>
         </div>
         <div class="table-container">
             <table id="storeTable">
@@ -86,8 +98,16 @@
     <div class="section">
         <h2>🏆 排名最高50間店</h2>
         <div class="filter-bar">
-            <label>月份 Month:</label>
-            <select id="topMonthSelect"><option value="2026-07">2026-07</option></select>
+            <label>年份 Year:</label>
+            <select id="s3Year">
+                <option value="">全部 All</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
+            <label>月份範圍:</label>
+            <select id="topStartMonth"><option value="">全部 All</option></select>
+            <label>至</label>
+            <select id="topEndMonth"><option value="">全部 All</option></select>
         </div>
         <div class="table-container">
             <table id="topTable">
@@ -107,8 +127,16 @@
     <div class="section">
         <h2>📉 排名最差50間店</h2>
         <div class="filter-bar">
-            <label>月份 Month:</label>
-            <select id="lowMonthSelect"><option value="2026-07">2026-07</option></select>
+            <label>年份 Year:</label>
+            <select id="s4Year">
+                <option value="">全部 All</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
+            <label>月份範圍:</label>
+            <select id="lowStartMonth"><option value="">全部 All</option></select>
+            <label>至</label>
+            <select id="lowEndMonth"><option value="">全部 All</option></select>
         </div>
         <div class="table-container">
             <table id="lowTable">
@@ -407,10 +435,33 @@
             return '0.0%';
         }
 
+        function filterByYear(data, year) {
+            if (!year) return data;
+            return data.filter(item => item.month && item.month.startsWith(year));
+        }
+
+        function getUniqueMonths(data) {
+            const months = [...new Set(data.map(d => d.month))].sort();
+            return months;
+        }
+
+        function populateMonthDropdownForYear(selectId, data, year) {
+            const sel = document.getElementById(selectId);
+            const filtered = filterByYear(data, year);
+            const months = getUniqueMonths(filtered);
+            const current = sel.value;
+            sel.innerHTML = '<option value="">全部 All</option>' +
+                months.map(m => '<option value="' + m + '">' + m + '</option>').join('');
+            if (months.includes(current)) sel.value = current;
+        }
+
         function renderSummaryCards() {
             const container = document.getElementById('summaryCards');
+            const yearSelect = document.getElementById('s1Year');
+            const selectedYear = yearSelect.value;
+            let filtered = filterByYear(monthData, selectedYear);
             let html = '';
-            monthData.slice().reverse().forEach((m) => {
+            filtered.slice().reverse().forEach((m) => {
                 html += `
                     <div class="card" onclick="document.getElementById('monthSelect').value='${m.month}'; renderMonthTotal();">
                         <h3>${m.month}</h3>
@@ -424,13 +475,16 @@
 
         function renderMonthTotal() {
             const select = document.getElementById('monthSelect');
+            const yearSelect = document.getElementById('s1Year');
             const thead = document.querySelector('#monthTotalTable thead');
             const tbody = document.querySelector('#monthTotalTable tbody');
+            const selectedYear = yearSelect.value;
             const selectedMonth = select.value;
             const TARGET_GMV = 8000000;
-            let filtered = monthData;
+            populateMonthDropdownForYear('monthSelect', monthData, selectedYear);
+            let filtered = filterByYear(monthData, selectedYear);
             if (selectedMonth) {
-                filtered = monthData.filter(m => m.month === selectedMonth);
+                filtered = filtered.filter(m => m.month === selectedMonth);
             }
             // Calculate total
             const totalGMV = filtered.reduce((sum, m) => sum + (m.GMV || 0), 0);
@@ -463,11 +517,14 @@
         function renderStoreMonthly() {
             const storeSelect = document.getElementById('storeSelect');
             const monthSelect = document.getElementById('storeMonthSelect');
+            const yearSelect = document.getElementById('s2Year');
             const thead = document.querySelector('#storeTable thead');
             const tbody = document.querySelector('#storeTable tbody');
+            const selectedYear = yearSelect.value;
             const selectedStore = storeSelect.value;
             const selectedMonth = monthSelect.value;
-            let filtered = storeData;
+            populateMonthDropdownForYear('storeMonthSelect', storeData, selectedYear);
+            let filtered = filterByYear(storeData, selectedYear);
             if (selectedMonth) {
                 filtered = filtered.filter(s => s.month === selectedMonth);
             }
@@ -502,17 +559,31 @@
         }
 
         function renderTopMerchants() {
-            const select = document.getElementById('topMonthSelect');
+            const yearSelect = document.getElementById('s3Year');
+            const startMonthSelect = document.getElementById('topStartMonth');
+            const endMonthSelect = document.getElementById('topEndMonth');
             const thead = document.querySelector('#topTable thead');
             const tbody = document.querySelector('#topTable tbody');
-            const selectedMonth = select.value;
-            let filtered = topData;
-            if (selectedMonth) {
-                filtered = filtered.filter(t => t.month === selectedMonth);
+            const selectedYear = yearSelect.value;
+            const startMonth = startMonthSelect.value;
+            const endMonth = endMonthSelect.value;
+
+            populateMonthDropdownForYear('topStartMonth', topData, selectedYear);
+            populateMonthDropdownForYear('topEndMonth', topData, selectedYear);
+
+            let filtered = filterByYear(topData, selectedYear);
+            if (startMonth || endMonth) {
+                filtered = filtered.filter(t => {
+                    if (startMonth && endMonth) return t.month >= startMonth && t.month <= endMonth;
+                    if (startMonth) return t.month >= startMonth;
+                    if (endMonth) return t.month <= endMonth;
+                    return true;
+                });
             }
-            // Calculate total
-            const totalGMV = filtered.reduce((sum, t) => sum + (t.GMV || 0), 0);
-            // Total row in thead (above column headers)
+
+            let displayData = [...filtered].sort((a, b) => b.GMV - a.GMV).slice(0, 50);
+
+            const totalGMV = displayData.reduce((sum, t) => sum + (t.GMV || 0), 0);
             thead.innerHTML = `
                 <tr class="total-row">
                     <td colspan="3" class="num" style="color:#ffd700;font-weight:bold;">💰 總計 Total</td>
@@ -525,7 +596,7 @@
                     <th class="num">GMV</th>
                 </tr>
             `;
-            tbody.innerHTML = filtered.map((t, i) => `
+            tbody.innerHTML = displayData.map((t, i) => `
                 <tr>
                     <td><span class="top-badge">#${i + 1}</span></td>
                     <td>${t.primary_store_code || 'N/A'}</td>
@@ -535,18 +606,32 @@
             `).join('');
         }
 
-        function renderLowMerchants() {
-            const select = document.getElementById('lowMonthSelect');
+function renderLowMerchants() {
+            const yearSelect = document.getElementById('s4Year');
+            const startMonthSelect = document.getElementById('lowStartMonth');
+            const endMonthSelect = document.getElementById('lowEndMonth');
             const thead = document.querySelector('#lowTable thead');
             const tbody = document.querySelector('#lowTable tbody');
-            const selectedMonth = select.value;
-            let filtered = lowData;
-            if (selectedMonth) {
-                filtered = filtered.filter(t => t.month === selectedMonth);
+            const selectedYear = yearSelect.value;
+            const startMonth = startMonthSelect.value;
+            const endMonth = endMonthSelect.value;
+
+            populateMonthDropdownForYear('lowStartMonth', lowData, selectedYear);
+            populateMonthDropdownForYear('lowEndMonth', lowData, selectedYear);
+
+            let filtered = filterByYear(lowData, selectedYear);
+            if (startMonth || endMonth) {
+                filtered = filtered.filter(t => {
+                    if (startMonth && endMonth) return t.month >= startMonth && t.month <= endMonth;
+                    if (startMonth) return t.month >= startMonth;
+                    if (endMonth) return t.month <= endMonth;
+                    return true;
+                });
             }
-            // Calculate total
-            const totalGMV = filtered.reduce((sum, t) => sum + (t.GMV || 0), 0);
-            // Total row in thead (above column headers)
+
+            let displayData = [...filtered].sort((a, b) => a.GMV - b.GMV).slice(0, 50);
+
+            const totalGMV = displayData.reduce((sum, t) => sum + (t.GMV || 0), 0);
             thead.innerHTML = `
                 <tr class="total-row">
                     <td colspan="3" class="num" style="color:#ffd700;font-weight:bold;">💰 總計 Total</td>
@@ -559,7 +644,7 @@
                     <th class="num">GMV</th>
                 </tr>
             `;
-            tbody.innerHTML = filtered.map((t, i) => `
+            tbody.innerHTML = displayData.map((t, i) => `
                 <tr>
                     <td><span class="low-badge">#${i + 1}</span></td>
                     <td>${t.primary_store_code || 'N/A'}</td>
@@ -570,7 +655,7 @@
         }
 
 
-        // Section 5 filter listeners
+        // Section 5 filter listeners// Section 5 filter listeners
         document.getElementById('s5Store').addEventListener('change', renderStoreContact);
         document.getElementById('s5Month').addEventListener('change', renderStoreContact);
         document.getElementById('s5Target').addEventListener('change', renderStoreContact);
@@ -717,4 +802,17 @@
         renderTopMerchants();
         renderLowMerchants();
         renderStoreContact();
+
+        // Year filter listeners
+        document.getElementById('s1Year').addEventListener('change', () => { renderSummaryCards(); renderMonthTotal(); });
+        document.getElementById('monthSelect').addEventListener('change', renderMonthTotal);
+        document.getElementById('s2Year').addEventListener('change', renderStoreMonthly);
+        document.getElementById('storeSelect').addEventListener('change', renderStoreMonthly);
+        document.getElementById('storeMonthSelect').addEventListener('change', renderStoreMonthly);
+        document.getElementById('s3Year').addEventListener('change', renderTopMerchants);
+        document.getElementById('topStartMonth').addEventListener('change', renderTopMerchants);
+        document.getElementById('topEndMonth').addEventListener('change', renderTopMerchants);
+        document.getElementById('s4Year').addEventListener('change', renderLowMerchants);
+        document.getElementById('lowStartMonth').addEventListener('change', renderLowMerchants);
+        document.getElementById('lowEndMonth').addEventListener('change', renderLowMerchants);
     </script>
