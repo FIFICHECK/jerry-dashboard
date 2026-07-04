@@ -568,6 +568,24 @@
         }
 
 
+        // Populate dropdown options from contactData
+            const populateDropdown = (id, key, label) => {
+                const sel = document.getElementById(id);
+                if (!sel) return;
+                const values = [...new Set(Object.values(contactData).map(c => c[key]).filter(v => v))].sort();
+                values.forEach(v => {
+                    const opt = document.createElement('option');
+                    opt.value = v;
+                    opt.textContent = v;
+                    sel.appendChild(opt);
+                });
+            };
+            populateDropdown('s5ContractMonth', 'contract_yyyy_mm', '合約到期月');
+            populateDropdown('s5Payment', 'payment_term', 'Payment Term');
+            populateDropdown('s5Color', 'color_tape', 'Color Tape');
+            populateDropdown('s5ContractType', 'contract_type', '合約類型');
+            populateDropdown('s5EarlyBird', 'early_bird', 'Early Bird');
+
         document.getElementById('s5Year').addEventListener('change', renderStoreContact);
         document.getElementById('s5Store').addEventListener('change', renderStoreContact);
         document.getElementById('s5Month').addEventListener('change', renderStoreContact);
