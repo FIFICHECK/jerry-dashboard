@@ -616,8 +616,17 @@
             }
             filtered = filtered.sort((a, b) => b.GMV - a.GMV);
 
-            // Calculate totals from filtered data
-            const totalGmv = filtered.reduce((sum, s) => sum + s.GMV, 0);
+            // Calculate GMV total from storeData directly (includes stores not in contactData)
+            let storeDataFiltered = storeData;
+            if (selectedYear) {
+                storeDataFiltered = storeDataFiltered.filter(s => s.month && s.month.startsWith(selectedYear));
+            }
+            if (selectedMonth) {
+                storeDataFiltered = storeDataFiltered.filter(s => s.month === selectedMonth);
+            }
+            const totalGmv = storeDataFiltered.reduce((sum, s) => sum + s.GMV, 0);
+
+            // Calculate Early Bird total and store count from filtered data (contactData-based)
             const totalEarlyBird = filtered.reduce((sum, s) => {
                 const c = contactData[s.primary_store_code] || {};
                 return sum + (c.early_bird || 0);
