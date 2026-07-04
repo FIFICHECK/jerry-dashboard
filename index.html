@@ -427,40 +427,37 @@
             const thead = document.querySelector('#monthTotalTable thead');
             const tbody = document.querySelector('#monthTotalTable tbody');
             const selectedMonth = select.value;
+            const TARGET_GMV = 8000000;
             let filtered = monthData;
             if (selectedMonth) {
                 filtered = monthData.filter(m => m.month === selectedMonth);
             }
             // Calculate total
             const totalGMV = filtered.reduce((sum, m) => sum + (m.GMV || 0), 0);
-            const totalGP = filtered.reduce((sum, m) => sum + (m.GP || 0), 0);
-            const totalStores = filtered.reduce((sum, m) => sum + (m.store_count || 0), 0);
+            const totalRunRate = totalGMV > 0 ? ((totalGMV / TARGET_GMV) * 100).toFixed(1) : '0.0';
             // Total row in thead (above column headers)
             thead.innerHTML = `
                 <tr class="total-row">
                     <td colspan="2" class="num" style="color:#ffd700;font-weight:bold;">💰 總計 Total</td>
                     <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(totalGMV)}</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(totalGP)}</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${totalStores}</td>
+                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(TARGET_GMV)}</td>
+                    <td class="num" style="color:#ffd700;font-weight:bold;">${totalRunRate}%</td>
+                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
                     <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
                 </tr>
                 <tr>
                     <th>月份 Month</th>
                     <th class="num">GMV</th>
-                    <th class="num">GP</th>
+                    <th class="num">Target GMV</th>
+                    <th class="num">GMV Run Rate %</th>
                     <th class="num">店鋪數 Stores</th>
                     <th class="num">MoM 升/跌幅</th>
                 </tr>
             `;
-            tbody.innerHTML = filtered.map(m => `
-                <tr>
-                    <td>${m.month}</td>
-                    <td class="num">${formatNum(m.GMV)}</td>
-                    <td class="num">${formatNum(m.GP)}</td>
-                    <td class="num">${m.store_count}</td>
-                    <td class="num">${formatMom(m.mom_change)}</td>
-                </tr>
-            `).join('');
+            tbody.innerHTML = filtered.map(m => {
+                const runRate = m.GMV > 0 ? ((m.GMV / TARGET_GMV) * 100).toFixed(1) : '0.0';
+                return `<tr><td>${m.month}</td><td class="num">${formatNum(m.GMV)}</td><td class="num">${formatNum(TARGET_GMV)}</td><td class="num">${runRate}%</td><td class="num">${m.store_count}</td><td class="num">${formatMom(m.mom_change)}</td></tr>`;
+            }).join('');
         }
 
         function renderStoreMonthly() {
