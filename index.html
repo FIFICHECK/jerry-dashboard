@@ -646,8 +646,8 @@
 
             // Populate s5Month dropdown with unique months from storeData
             const monthSel = document.getElementById('s5Month');
-            const months = [...new Set(storeData.map(s => s.month).filter(m => m))].sort().reverse();
-            months.forEach(m => {
+            const s5Months = [...new Set(storeData.map(s => s.month).filter(m => m))].sort().reverse();
+            s5Months.forEach(m => {
                 const opt = document.createElement('option');
                 opt.value = m;
                 opt.textContent = m;
