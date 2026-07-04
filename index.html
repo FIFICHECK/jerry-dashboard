@@ -19,9 +19,10 @@
         .card h3 { color: #888; font-size: 14px; margin-bottom: 10px; }
         .card .value { font-size: 28px; font-weight: bold; color: #4fc3f7; }
         .card .mom { font-size: 14px; margin-top: 5px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
         th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #333; }
         th { background: #0f3460; color: #4fc3f7; position: sticky; top: 0; z-index: 20; }
+        thead { position: sticky; top: 0; z-index: 19; }
         tr:hover { background: #1a1a2e; }
         .total-row td { background: #1a3a5c; border-bottom: 2px solid #ffd700; position: sticky; top: 0; z-index: 10; }
         .num { text-align: right; font-family: monospace; }
@@ -568,10 +569,10 @@
             const startMonth = startMonthSelect.value;
             const endMonth = endMonthSelect.value;
 
-            populateMonthDropdownForYear('topStartMonth', topData, selectedYear);
-            populateMonthDropdownForYear('topEndMonth', topData, selectedYear);
+            populateMonthDropdownForYear('topStartMonth', storeData, selectedYear);
+            populateMonthDropdownForYear('topEndMonth', storeData, selectedYear);
 
-            let filtered = filterByYear(topData, selectedYear);
+            let filtered = filterByYear(storeData, selectedYear);
             if (startMonth || endMonth) {
                 filtered = filtered.filter(t => {
                     if (startMonth && endMonth) return t.month >= startMonth && t.month <= endMonth;
@@ -581,9 +582,19 @@
                 });
             }
 
-            let displayData = [...filtered].sort((a, b) => b.GMV - a.GMV).slice(0, 50);
+            // Aggregate GMV by store
+            const storeGMVMap = {};
+            filtered.forEach(t => {
+                const code = t.primary_store_code;
+                if (!storeGMVMap[code]) {
+                    storeGMVMap[code] = { primary_store_code: code, primary_store_name_chi: t.primary_store_name_chi, GMV: 0 };
+                }
+                storeGMVMap[code].GMV += t.GMV || 0;
+            });
+            let aggregated = Object.values(storeGMVMap);
+            let displayData = aggregated.sort((a, b) => b.GMV - a.GMV).slice(0, 50);
 
-            const totalGMV = displayData.reduce((sum, t) => sum + (t.GMV || 0), 0);
+            const totalGMV = displayData.reduce((sum, t) => sum + t.GMV, 0);
             thead.innerHTML = `
                 <tr class="total-row">
                     <td colspan="3" class="num" style="color:#ffd700;font-weight:bold;">💰 總計 Total</td>
@@ -616,10 +627,10 @@ function renderLowMerchants() {
             const startMonth = startMonthSelect.value;
             const endMonth = endMonthSelect.value;
 
-            populateMonthDropdownForYear('lowStartMonth', lowData, selectedYear);
-            populateMonthDropdownForYear('lowEndMonth', lowData, selectedYear);
+            populateMonthDropdownForYear('lowStartMonth', storeData, selectedYear);
+            populateMonthDropdownForYear('lowEndMonth', storeData, selectedYear);
 
-            let filtered = filterByYear(lowData, selectedYear);
+            let filtered = filterByYear(storeData, selectedYear);
             if (startMonth || endMonth) {
                 filtered = filtered.filter(t => {
                     if (startMonth && endMonth) return t.month >= startMonth && t.month <= endMonth;
@@ -629,7 +640,17 @@ function renderLowMerchants() {
                 });
             }
 
-            let displayData = [...filtered].sort((a, b) => a.GMV - b.GMV).slice(0, 50);
+            // Aggregate GMV by store
+            const storeGMVMap = {};
+            filtered.forEach(t => {
+                const code = t.primary_store_code;
+                if (!storeGMVMap[code]) {
+                    storeGMVMap[code] = { primary_store_code: code, primary_store_name_chi: t.primary_store_name_chi, GMV: 0 };
+                }
+                storeGMVMap[code].GMV += t.GMV || 0;
+            });
+            let aggregated = Object.values(storeGMVMap);
+            let displayData = aggregated.sort((a, b) => a.GMV - b.GMV).slice(0, 50);
 
             const totalGMV = displayData.reduce((sum, t) => sum + (t.GMV || 0), 0);
             thead.innerHTML = `
