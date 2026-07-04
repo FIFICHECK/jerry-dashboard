@@ -40,6 +40,12 @@
     <!-- Section 1: By Month -->
     <div class="section">
         <h2>📈 月度總銷售額</h2>
+        <div class="summary-cards" id="s1GmvTotalCard">
+            <div class="card">
+                <div class="card-label">💰 GMV 總計</div>
+                <div class="card-value" id="s1GmvTotal">$0.00</div>
+            </div>
+        </div>
         <div class="summary-cards" id="summaryCards"></div>
         <div class="filter-bar">
             <label>年份 Year:</label>
@@ -72,6 +78,12 @@
 
     <div class="section">
         <h2>🏪 店鋪每月銷售額</h2>
+        <div class="summary-cards" id="s2GmvTotalCard">
+            <div class="card">
+                <div class="card-label">💰 GMV 總計</div>
+                <div class="card-value" id="s2GmvTotal">$0.00</div>
+            </div>
+        </div>
         <div class="filter-bar">
             <label>年份 Year:</label>
             <select id="s2Year">
@@ -104,6 +116,12 @@
 
     <div class="section">
         <h2>🏆 排名最高的50間店</h2>
+        <div class="summary-cards" id="s3GmvTotalCard">
+            <div class="card">
+                <div class="card-label">💰 GMV 總計</div>
+                <div class="card-value" id="s3GmvTotal">$0.00</div>
+            </div>
+        </div>
         <div class="filter-bar">
             <label>年份 Year:</label>
             <select id="s3Year">
@@ -141,6 +159,12 @@
 
     <div class="section">
         <h2>📉 排名最差的50間店</h2>
+        <div class="summary-cards" id="s4GmvTotalCard">
+            <div class="card">
+                <div class="card-label">💰 GMV 總計</div>
+                <div class="card-value" id="s4GmvTotal">$0.00</div>
+            </div>
+        </div>
         <div class="filter-bar">
             <label>年份 Year:</label>
             <select id="s4Year">
@@ -385,6 +409,9 @@
                     <td class="num">${formatMom(m.mom_change)}</td>
                 </tr>
             `).join('');
+            // Update GMV total for Section 1
+            const totalGmv = filtered.reduce((sum, m) => sum + m.GMV, 0);
+            document.getElementById('s1GmvTotal').textContent = formatNum(totalGmv);
         }
 
         function renderStoreMonthly() {
@@ -411,6 +438,9 @@
                     <td class="num">${formatMom(s.mom_change)}</td>
                 </tr>
             `).join('');
+            // Update GMV total for Section 2
+            const totalGmv = filtered.reduce((sum, s) => sum + s.GMV, 0);
+            document.getElementById('s2GmvTotal').textContent = formatNum(totalGmv);
         }
 
         function renderTopMerchants() {
@@ -448,6 +478,9 @@
                 '<td class="store-name" title="' + (t.primary_store_name_chi || '') + '">' + (t.primary_store_name_chi || 'N/A') + '</td>' +
                 '<td class="num">' + formatNum(t.GMV) + '</td>' +
             '</tr>').join('');
+            // Update GMV total for Section 3
+            const totalGmv = top50.reduce((sum, t) => sum + t.GMV, 0);
+            document.getElementById('s3GmvTotal').textContent = formatNum(totalGmv);
         }
 
         function renderLowMerchants() {
@@ -485,6 +518,9 @@
                 '<td class="store-name" title="' + (t.primary_store_name_chi || '') + '">' + (t.primary_store_name_chi || 'N/A') + '</td>' +
                 '<td class="num">' + formatNum(t.GMV) + '</td>' +
             '</tr>').join('');
+            // Update GMV total for Section 4
+            const totalGmv = low50.reduce((sum, t) => sum + t.GMV, 0);
+            document.getElementById('s4GmvTotal').textContent = formatNum(totalGmv);
         }
 
         document.getElementById('s1Year').addEventListener('change', () => { renderSummaryCards(); renderMonthTotal(); });
