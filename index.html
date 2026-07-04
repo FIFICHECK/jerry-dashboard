@@ -28,17 +28,29 @@
         .table-container { max-height: 500px; overflow-y: auto; }
         .top-badge { background: #2e7d32; padding: 2px 8px; border-radius: 3px; font-size: 12px; }
         .low-badge { background: #c62828; padding: 2px 8px; border-radius: 3px; font-size: 12px; }
+        .range-filter { display: flex; gap: 10px; align-items: center; }
+        .range-filter select { min-width: 120px; }
     </style>
 </head>
 <body>
-    <h1>📊 Jerry GMV Analysis</h1>
+    <h1>📊 Jerry GMV Dashboard</h1>
 
+    <!-- Section 1: By Month -->
     <div class="section">
         <h2>📈 By Month (with MoM 升/跌幅)</h2>
         <div class="summary-cards" id="summaryCards"></div>
         <div class="filter-bar">
+            <label>年份 Year:</label>
+            <select id="s1Year">
+                <option value="">全部 All</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
             <label>月份 Month:</label>
-            <select id="monthSelect"><option value="2026-07">2026-07</option></select>
+            <select id="monthSelect">
+                <option value="">全部 All</option>
+                <option value="2026-07">2026-07</option>
+            </select>
         </div>
         <div class="table-container">
             <table id="monthTotalTable">
@@ -59,6 +71,12 @@
     <div class="section">
         <h2>🏪 By Store Month GMV (with MoM 升/跌幅)</h2>
         <div class="filter-bar">
+            <label>年份 Year:</label>
+            <select id="s2Year">
+                <option value="">全部 All</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
             <label>店鋪 Store:</label>
             <select id="storeSelect">
                 <option value="all">全部 All</option>
@@ -83,10 +101,26 @@
     </div>
 
     <div class="section">
-        <h2>🏆 Top 10 Merchants per Month GMV</h2>
+        <h2>🏆 Top 50 Merchants per Month GMV</h2>
         <div class="filter-bar">
-            <label>月份 Month:</label>
-            <select id="topMonthSelect"><option value="2026-07">2026-07</option></select>
+            <label>年份 Year:</label>
+            <select id="s3Year">
+                <option value="">全部 All</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
+            <label>月份範圍 Month Range:</label>
+            <div class="range-filter">
+                <select id="topStartMonth">
+                    <option value="">全部 All</option>
+                    <option value="2026-07">2026-07</option>
+                </select>
+                <span>至</span>
+                <select id="topEndMonth">
+                    <option value="">全部 All</option>
+                    <option value="2026-07">2026-07</option>
+                </select>
+            </div>
         </div>
         <div class="table-container">
             <table id="topTable">
@@ -104,10 +138,26 @@
     </div>
 
     <div class="section">
-        <h2>📉 Low 10 Merchants per Month GMV</h2>
+        <h2>📉 Low 50 Merchants per Month GMV</h2>
         <div class="filter-bar">
-            <label>月份 Month:</label>
-            <select id="lowMonthSelect"><option value="2026-07">2026-07</option></select>
+            <label>年份 Year:</label>
+            <select id="s4Year">
+                <option value="">全部 All</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
+            <label>月份範圍 Month Range:</label>
+            <div class="range-filter">
+                <select id="lowStartMonth">
+                    <option value="">全部 All</option>
+                    <option value="2026-07">2026-07</option>
+                </select>
+                <span>至</span>
+                <select id="lowEndMonth">
+                    <option value="">全部 All</option>
+                    <option value="2026-07">2026-07</option>
+                </select>
+            </div>
         </div>
         <div class="table-container">
             <table id="lowTable">
@@ -126,6 +176,12 @@
     <div class="section" id="section5">
         <h2>🏪 By Store Month + 商戶資料 (Target / Non Target / Contract / Payment / Color / VIP / FS)</h2>
         <div class="filter-bar">
+            <label>年份 Year:</label>
+            <select id="s5Year">
+                <option value="">全部 All</option>
+                <option value="2026">2026</option>
+                <option value="2025">2025</option>
+            </select>
             <label>店鋪 Store:</label>
             <select id="s5Store">
                 <option value="">全部 All</option>
@@ -228,10 +284,47 @@
             return '0.0%';
         }
 
+        // Helper: filter data by year
+        function filterByYear(data, year) {
+            if (!year) return data;
+            return data.filter(item => item.month && item.month.startsWith(year));
+        }
+
+        // Helper: aggregate GMV by store across month range
+        function aggregateByStore(data, startMonth, endMonth) {
+            const map = {};
+            data.forEach(item => {
+                if (!item.month) return;
+                const month = item.month;
+                if (startMonth && endMonth) {
+                    if (month < startMonth || month > endMonth) return;
+                } else if (startMonth) {
+                    if (month !== startMonth) return;
+                }
+                const key = item.primary_store_code;
+                if (!map[key]) {
+                    map[key] = {
+                        primary_store_code: key,
+                        primary_store_name_chi: item.primary_store_name_chi,
+                        GMV: 0
+                    };
+                }
+                map[key].GMV += item.GMV || 0;
+                // Keep the most recent store name
+                if (item.primary_store_name_chi) {
+                    map[key].primary_store_name_chi = item.primary_store_name_chi;
+                }
+            });
+            return Object.values(map);
+        }
+
         function renderSummaryCards() {
             const container = document.getElementById('summaryCards');
+            const yearSelect = document.getElementById('s1Year');
+            const selectedYear = yearSelect.value;
             let html = '';
-            monthData.slice().reverse().forEach((m) => {
+            let filteredData = filterByYear(monthData, selectedYear);
+            filteredData.slice().reverse().forEach((m) => {
                 html += `
                     <div class="card" onclick="document.getElementById('monthSelect').value='${m.month}'; renderMonthTotal();">
                         <h3>${m.month}</h3>
@@ -244,12 +337,14 @@
         }
 
         function renderMonthTotal() {
-            const select = document.getElementById('monthSelect');
+            const monthSelect = document.getElementById('monthSelect');
+            const yearSelect = document.getElementById('s1Year');
             const tbody = document.querySelector('#monthTotalTable tbody');
-            const selectedMonth = select.value;
-            let filtered = monthData;
+            const selectedMonth = monthSelect.value;
+            const selectedYear = yearSelect.value;
+            let filtered = filterByYear(monthData, selectedYear);
             if (selectedMonth) {
-                filtered = monthData.filter(m => m.month === selectedMonth);
+                filtered = filtered.filter(m => m.month === selectedMonth);
             }
             tbody.innerHTML = filtered.map(m => `
                 <tr>
@@ -265,10 +360,12 @@
         function renderStoreMonthly() {
             const storeSelect = document.getElementById('storeSelect');
             const monthSelect = document.getElementById('storeMonthSelect');
+            const yearSelect = document.getElementById('s2Year');
             const tbody = document.querySelector('#storeTable tbody');
             const selectedStore = storeSelect.value;
             const selectedMonth = monthSelect.value;
-            let filtered = storeData;
+            const selectedYear = yearSelect.value;
+            let filtered = filterByYear(storeData, selectedYear);
             if (selectedMonth) {
                 filtered = filtered.filter(s => s.month === selectedMonth);
             }
@@ -287,14 +384,41 @@
         }
 
         function renderTopMerchants() {
-            const select = document.getElementById('topMonthSelect');
+            const startMonthSelect = document.getElementById('topStartMonth');
+            const endMonthSelect = document.getElementById('topEndMonth');
+            const yearSelect = document.getElementById('s3Year');
             const tbody = document.querySelector('#topTable tbody');
-            const selectedMonth = select.value;
-            let filtered = topData;
-            if (selectedMonth) {
-                filtered = filtered.filter(t => t.month === selectedMonth);
+            const startMonth = startMonthSelect.value;
+            const endMonth = endMonthSelect.value;
+            const selectedYear = yearSelect.value;
+            
+            // Filter by year first
+            let filtered = filterByYear(topData, selectedYear);
+            
+            // Aggregate GMV by store if range is selected
+            let aggregated;
+            if (startMonth || endMonth) {
+                aggregated = aggregateByStore(filtered, startMonth, endMonth);
+                aggregated.sort((a, b) => b.GMV - a.GMV);
+            } else {
+                // No range, just filter by single month if selected
+                if (startMonth) {
+                    aggregated = aggregated || [];
+                    filtered.forEach(t => {
+                        if (t.month === startMonth) {
+                            if (!aggregated.find(a => a.primary_store_code === t.primary_store_code)) {
+                                aggregated.push(t);
+                            }
+                        }
+                    });
+                } else {
+                    aggregated = filtered;
+                }
             }
-            tbody.innerHTML = filtered.map((t, i) => `
+            
+            // Take top 50
+            const top50 = aggregated.slice(0, 50);
+            tbody.innerHTML = top50.map((t, i) => `
                 <tr>
                     <td><span class="top-badge">#${i + 1}</span></td>
                     <td>${t.primary_store_code || 'N/A'}</td>
@@ -305,14 +429,41 @@
         }
 
         function renderLowMerchants() {
-            const select = document.getElementById('lowMonthSelect');
+            const startMonthSelect = document.getElementById('lowStartMonth');
+            const endMonthSelect = document.getElementById('lowEndMonth');
+            const yearSelect = document.getElementById('s4Year');
             const tbody = document.querySelector('#lowTable tbody');
-            const selectedMonth = select.value;
-            let filtered = lowData;
-            if (selectedMonth) {
-                filtered = filtered.filter(t => t.month === selectedMonth);
+            const startMonth = startMonthSelect.value;
+            const endMonth = endMonthSelect.value;
+            const selectedYear = yearSelect.value;
+            
+            // Filter by year first
+            let filtered = filterByYear(lowData, selectedYear);
+            
+            // Aggregate GMV by store if range is selected
+            let aggregated;
+            if (startMonth || endMonth) {
+                aggregated = aggregateByStore(filtered, startMonth, endMonth);
+                aggregated.sort((a, b) => a.GMV - b.GMV);
+            } else {
+                // No range, just filter by single month if selected
+                if (startMonth) {
+                    aggregated = aggregated || [];
+                    filtered.forEach(t => {
+                        if (t.month === startMonth) {
+                            if (!aggregated.find(a => a.primary_store_code === t.primary_store_code)) {
+                                aggregated.push(t);
+                            }
+                        }
+                    });
+                } else {
+                    aggregated = filtered;
+                }
             }
-            tbody.innerHTML = filtered.map((t, i) => `
+            
+            // Take low 50
+            const low50 = aggregated.slice(0, 50);
+            tbody.innerHTML = low50.map((t, i) => `
                 <tr>
                     <td><span class="low-badge">#${i + 1}</span></td>
                     <td>${t.primary_store_code || 'N/A'}</td>
@@ -322,16 +473,23 @@
             `).join('');
         }
 
+        document.getElementById('s1Year').addEventListener('change', () => { renderSummaryCards(); renderMonthTotal(); });
         document.getElementById('monthSelect').addEventListener('change', renderMonthTotal);
+        document.getElementById('s2Year').addEventListener('change', renderStoreMonthly);
         document.getElementById('storeSelect').addEventListener('change', renderStoreMonthly);
         document.getElementById('storeMonthSelect').addEventListener('change', renderStoreMonthly);
-        document.getElementById('topMonthSelect').addEventListener('change', renderTopMerchants);
-        document.getElementById('lowMonthSelect').addEventListener('change', renderLowMerchants);
+        document.getElementById('s3Year').addEventListener('change', renderTopMerchants);
+        document.getElementById('topStartMonth').addEventListener('change', renderTopMerchants);
+        document.getElementById('topEndMonth').addEventListener('change', renderTopMerchants);
+        document.getElementById('s4Year').addEventListener('change', renderLowMerchants);
+        document.getElementById('lowStartMonth').addEventListener('change', renderLowMerchants);
+        document.getElementById('lowEndMonth').addEventListener('change', renderLowMerchants);
 
 
         function renderStoreContact() {
             const storeSel = document.getElementById('s5Store');
             const monthSel = document.getElementById('s5Month');
+            const yearSel = document.getElementById('s5Year');
             const targetSel = document.getElementById('s5Target');
             const contractMonthSel = document.getElementById('s5ContractMonth');
             const paymentSel = document.getElementById('s5Payment');
@@ -344,6 +502,7 @@
             const tbody = document.querySelector('#storeContactTable tbody');
             const selectedStore = storeSel.value;
             const selectedMonth = monthSel.value;
+            const selectedYear = yearSel.value;
             const selectedTarget = targetSel.value;
             const selectedContractMonth = contractMonthSel.value;
             const selectedPayment = paymentSel.value;
@@ -357,11 +516,21 @@
             // Build array from contactData (ALL stores), merge with storeData GMV
             let allStores = Object.keys(contactData).map(storeId => {
                 const c = contactData[storeId];
-                const storeRecord = storeData.find(s => s.primary_store_code === storeId && (!selectedMonth || s.month === selectedMonth));
+                // Filter storeData by year and month
+                let matchingRecords = storeData.filter(s => s.primary_store_code === storeId);
+                if (selectedYear) {
+                    matchingRecords = matchingRecords.filter(s => s.month && s.month.startsWith(selectedYear));
+                }
+                if (selectedMonth) {
+                    matchingRecords = matchingRecords.filter(s => s.month === selectedMonth);
+                }
+                const storeRecord = matchingRecords.length > 0 ? matchingRecords[0] : null;
+                // Sum GMV across filtered records
+                const totalGMV = matchingRecords.reduce((sum, s) => sum + (s.GMV || 0), 0);
                 return {
                     primary_store_code: storeId,
                     primary_store_name_chi: c.store_name || storeRecord?.primary_store_name_chi || '',
-                    GMV: storeRecord ? storeRecord.GMV : 0,
+                    GMV: totalGMV,
                     mom_change: storeRecord ? storeRecord.mom_change : null
                 };
             });
@@ -415,6 +584,7 @@
         }
 
 
+        document.getElementById('s5Year').addEventListener('change', renderStoreContact);
         document.getElementById('s5Store').addEventListener('change', renderStoreContact);
         document.getElementById('s5Month').addEventListener('change', renderStoreContact);
         document.getElementById('s5Target').addEventListener('change', renderStoreContact);
