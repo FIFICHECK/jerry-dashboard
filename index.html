@@ -476,24 +476,24 @@
             thead.innerHTML = `
                 <tr class="total-row">
                     <td colspan="1" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(TARGET_GMV)}</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">${totalRunRate}%</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">${formatNum(TARGET_GMV)}</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">${totalRunRate}%</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">-</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">-</td>
                 </tr>
                 <tr>
                     <th>月份 Month</th>
-                    <th>GMV</th>
-                    <th class="num">Target GMV</th>
-                    <th class="num">GMV Run Rate %</th>
-                    <th class="num">店鋪數 Stores</th>
-                    <th class="num">MoM 升/跌幅</th>
+                    <th style="text-align:right;">GMV</th>
+                    <th style="text-align:right;">Target GMV</th>
+                    <th style="text-align:right;">GMV Run Rate %</th>
+                    <th style="text-align:right;">店鋪數 Stores</th>
+                    <th style="text-align:right;">MoM 升/跌幅</th>
                 </tr>
             `;
             tbody.innerHTML = filtered.map(m => {
                 const runRate = m.GMV > 0 ? ((m.GMV / TARGET_GMV) * 100).toFixed(1) : '0.0';
-                return `<tr><td>${m.month}</td><td class="num">${formatNum(m.GMV)}</td><td class="num">${formatNum(TARGET_GMV)}</td><td class="num">${runRate}%</td><td class="num">${m.store_count}</td><td class="num">${formatMom(m.mom_change)}</td></tr>`;
+                return `<tr><td>${m.month}</td><td style="text-align:right;">${formatNum(m.GMV)}</td><td style="text-align:right;">${formatNum(TARGET_GMV)}</td><td style="text-align:right;">${runRate}%</td><td style="text-align:right;">${m.store_count}</td><td style="text-align:right;">${formatMom(m.mom_change)}</td></tr>`;
             }).join('');
         }
 
