@@ -734,9 +734,16 @@ function renderLowMerchants() {
                     if (selectedVip === 'non-vip' && c.join_vip === 'Y') return false;
                     if (selectedFs === 'Y' && c.join_fs !== 'Y') return false;
                     if (selectedFs === 'non-fs' && c.join_fs === 'Y') return false;
-                    if (selectedBrand === '13LM' && !is13LM) return false;
-                    if (selectedBrand === 'brand' && !brandFlagshipStores.includes(storeId)) return false;
-                    if (selectedBrand === 'no-icon' && (is13LM || brandFlagshipStores.includes(storeId))) return false;
+                    // Brand filter
+                    if (selectedBrand) {
+                        if (selectedBrand === '13LM') {
+                            if (!is13LM) return false;
+                        } else if (selectedBrand === 'brand') {
+                            if (!brandFlagshipStores.includes(storeId)) return false;
+                        } else if (selectedBrand === 'no-icon') {
+                            if (is13LM || brandFlagshipStores.includes(storeId)) return false;
+                        }
+                    }
                     return true;
                 });
             }
