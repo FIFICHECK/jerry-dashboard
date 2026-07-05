@@ -711,7 +711,16 @@ function renderLowMerchants() {
                     return true;
                 });
             }
-            filtered = filtered.sort((a, b) => b.GMV - a.GMV);
+            filtered = filtered.sort((a, b) => {
+                const codeA = a.primary_store_code;
+                const codeB = b.primary_store_code;
+                const prefixA = codeA.match(/^[A-Z]/)[0];
+                const prefixB = codeB.match(/^[A-Z]/)[0];
+                if (prefixA !== prefixB) return prefixA.localeCompare(prefixB);
+                const numA = parseInt(codeA.slice(1), 10);
+                const numB = parseInt(codeB.slice(1), 10);
+                return numA - numB;
+            });
 
             // Calculate totals - GMV from filtered (respects ALL filters including store), Early Bird sum from contactData
             const totalGMV = filtered.reduce((sum, s) => sum + (s.GMV || 0), 0);
