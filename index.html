@@ -521,22 +521,22 @@
             thead.innerHTML = `
                 <tr class="total-row">
                     <td colspan="2" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">-</td>
                 </tr>
                 <tr>
                     <th>店鋪代碼 Store Code</th>
                     <th>店鋪名稱 Store Name</th>
-                    <th>GMV</th>
-                    <th class="num">MoM 升/跌幅</th>
+                    <th style="text-align:right;">GMV</th>
+                    <th style="text-align:right;">MoM 升/跌幅</th>
                 </tr>
             `;
             tbody.innerHTML = filtered.map(s => `
                 <tr>
                     <td><a href="https://www.hktvmall.com/hktv/s/${s.primary_store_code}" target="_blank" class="store-link">${s.primary_store_code || 'N/A'}</a></td>
                     <td class="store-name" title="${s.primary_store_name_chi || ''}">${s.primary_store_name_chi || 'N/A'}</td>
-                    <td class="num">${formatNum(s.GMV)}</td>
-                    <td class="num">${formatMom(s.mom_change)}</td>
+                    <td style="text-align:right;">${formatNum(s.GMV)}</td>
+                    <td style="text-align:right;">${formatMom(s.mom_change)}</td>
                 </tr>
             `).join('');
         }
