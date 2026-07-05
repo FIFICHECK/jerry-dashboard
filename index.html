@@ -721,7 +721,7 @@ function renderLowMerchants() {
                     const storeId = s.primary_store_code;
                     const c = contactData[storeId] || {};
                     const thirteenLMStores = ['H8217001', 'P0034002', 'P0066001', 'P0066002', 'P0143002'];
-                    const brandFlagshipStores = ['B0961004','B1192001','B1252001','B1366001','B1709002','B1709003','B1709004','B1709005','B1709006','B1776001','H0228001','H0569002','H0569003','H0623004','H0883005','H5600001','H5858005','H5859006','H6183001','H6521002','H6550001','H6754005','H6754006','H7775001','H8024001','H9569001','H9776001','S2818001','S2818002','S6477001'];
+                    const brandFlagshipStores = ['B0961004','B1192001','B1252001','B1366001','B1709002','B1709003','B1709004','B1709005','B1709006','B1776001','H0228001','H0569002','H0569003','H0623004','H0883005','H5600001','H5858005','H5859005','H5859006','H6183001','H6521002','H6550001','H6754005','H6754006','H7775001','H8024001','H9569001','H9776001','S2818001','S2818002','S6477001'];
                     const is13LM = thirteenLMStores.includes(storeId);
                     if (selectedTarget && c.target_non !== selectedTarget) return false;
                     if (selectedContractMonth && (!c.contract_end || c.contract_end.substring(5, 7) !== selectedContractMonth)) return false;
@@ -805,7 +805,7 @@ function renderLowMerchants() {
                 const c = contactData[storeId] || {};
                 const displayGmv = s.GMV === 0 ? '$0.00' : formatNum(s.GMV);
                 // Brand flagship / 13LM icons
-                const brandFlagshipStores = ['B0961004','B1192001','B1252001','B1366001','B1709002','B1709003','B1709004','B1709005','B1709006','B1776001','H0228001','H0569002','H0569003','H0623004','H0883005','H5600001','H5858005','H5859006','H6183001','H6521002','H6550001','H6754005','H6754006','H7775001','H8024001','H9569001','H9776001','S2818001','S2818002','S6477001'];
+                const brandFlagshipStores = ['B0961004','B1192001','B1252001','B1366001','B1709002','B1709003','B1709004','B1709005','B1709006','B1776001','H0228001','H0569002','H0569003','H0623004','H0883005','H5600001','H5858005','H5859005','H5859006','H6183001','H6521002','H6550001','H6754005','H6754006','H7775001','H8024001','H9569001','H9776001','S2818001','S2818002','S6477001'];
                 const thirteenLMStores = ['H8217001', 'P0034002', 'P0066001', 'P0066002', 'P0143002'];
                 let brandIcon = '-';
                 if (thirteenLMStores.includes(storeId)) {
