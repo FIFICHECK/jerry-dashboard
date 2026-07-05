@@ -712,9 +712,13 @@ function renderLowMerchants() {
             }
             filtered = filtered.sort((a, b) => b.GMV - a.GMV);
 
-            // Calculate totals
-            const totalGMV = filtered.reduce((sum, s) => sum + (s.GMV || 0), 0);
-            const totalEarlyBird = filtered.filter(s => s.early_bird && s.early_bird !== '-').length;
+            // Calculate totals - GMV from storeDataFiltered (correct total), Early Bird sum from contactData
+            const storeDataFiltered = storeData.filter(s => {
+                if (selectedYear && s.month && !s.month.startsWith(selectedYear)) return false;
+                return true;
+            });
+            const totalGMV = storeDataFiltered.reduce((sum, s) => sum + (s.GMV || 0), 0);
+            const totalEarlyBird = filtered.reduce((sum, s) => { const eb = parseFloat(s.early_bird); return sum + (isNaN(eb) ? 0 : eb); }, 0);
             const storeCount = filtered.length;
 
             // Total row in thead (above column headers)
@@ -729,7 +733,7 @@ function renderLowMerchants() {
                     <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
                     <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
                     <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${totalEarlyBird} 有Early Bird</td>
+                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(totalEarlyBird)}</td>
                     <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
                     <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
                     <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
