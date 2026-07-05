@@ -475,7 +475,7 @@
             // Total row in thead (above column headers)
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="1" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
+                    <td colspan="1" class="num" style="text-align:right;color:#8b4040;font-weight:bold;">💰 總計 Total</td>
                     <td style="text-align:right;color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
                     <td style="text-align:right;color:#8b4040;font-weight:bold;">${formatNum(TARGET_GMV)}</td>
                     <td style="text-align:right;color:#8b4040;font-weight:bold;">${totalRunRate}%</td>
@@ -520,7 +520,7 @@
             // Total row in thead (above column headers)
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="2" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
+                    <td colspan="2" class="num" style="text-align:right;color:#8b4040;font-weight:bold;">💰 總計 Total</td>
                     <td style="text-align:right;color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
                     <td style="text-align:right;color:#8b4040;font-weight:bold;">-</td>
                 </tr>
@@ -579,8 +579,8 @@
             const totalGMV = displayData.reduce((sum, t) => sum + t.GMV, 0);
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="3" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td colspan="3" class="num" style="text-align:right;color:#8b4040;font-weight:bold;">💰 總計 Total</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
                 </tr>
                 <tr>
                     <th>排名 Rank</th>
@@ -637,8 +637,8 @@ function renderLowMerchants() {
             const totalGMV = displayData.reduce((sum, t) => sum + (t.GMV || 0), 0);
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="3" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td colspan="3" class="num" style="text-align:right;color:#8b4040;font-weight:bold;">💰 總計 Total</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
                 </tr>
                 <tr>
                     <th>排名 Rank</th>
@@ -777,7 +777,7 @@ function renderLowMerchants() {
                 <tr class="total-row">
                     <td colspan="2" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total (${storeCount} stores)</td>
                     <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
-                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td style="text-align:right;color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
                     <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
                     <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
                     <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
