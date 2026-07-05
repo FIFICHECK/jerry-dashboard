@@ -826,17 +826,17 @@ function renderLowMerchants() {
                 const colorTape = c.color_tape || '-';
                 const tapeClass = colorTape !== '-' ? 'tape-' + colorTape.toLowerCase() : '';
                 const tapeDisplay = tapeClass ? '<span class="' + tapeClass + '">' + colorTape + '</span>' : colorTape;
-                // Contract end date warning (within 1 week of 3 months before today)
+                // Contract end date warning (80-90 days from today)
                 const contractEnd = c.contract_end;
                 let contractDisplay = contractEnd || '-';
                 if (contractEnd) {
                     const today = new Date();
-                    const threeMonthsAgo = new Date(today);
-                    threeMonthsAgo.setMonth(threeMonthsAgo.getMonth() - 3);
-                    const oneWeekBefore = new Date(threeMonthsAgo);
-                    oneWeekBefore.setDate(oneWeekBefore.getDate() - 7);
+                    const eightyDaysLater = new Date(today);
+                    eightyDaysLater.setDate(eightyDaysLater.getDate() + 80);
+                    const ninetyDaysLater = new Date(today);
+                    ninetyDaysLater.setDate(ninetyDaysLater.getDate() + 90);
                     const contractDate = new Date(contractEnd);
-                    if (contractDate >= oneWeekBefore && contractDate <= threeMonthsAgo) {
+                    if (contractDate >= eightyDaysLater && contractDate <= ninetyDaysLater) {
                         contractDisplay = '<span class="contract-warning">' + contractEnd + '</span>';
                     }
                 }
