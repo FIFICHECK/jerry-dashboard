@@ -719,6 +719,7 @@ function renderLowMerchants() {
                     const storeId = s.primary_store_code;
                     const c = contactData[storeId] || {};
                     const thirteenLMStores = ['H8217001', 'P0034002', 'P0066001', 'P0066002', 'P0143002'];
+                    const brandFlagshipStores = [];
                     const is13LM = thirteenLMStores.includes(storeId);
                     if (selectedTarget && c.target_non !== selectedTarget) return false;
                     if (selectedContractMonth && (!c.contract_end || c.contract_end.substring(5, 7) !== selectedContractMonth)) return false;
