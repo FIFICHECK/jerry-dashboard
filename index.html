@@ -22,6 +22,12 @@
         .card .mom { font-size: 14px; margin-top: 5px; }
         table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; }
         th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #f0e0e0; }
+        /* Sparkle animation for black gold diamond */
+        @keyframes sparkle {
+            0%, 100% { color: #1a1a1a; text-shadow: 0 0 2px #ffd700, 0 0 4px #ffd700, 0 0 6px #ffd700; opacity: 1; }
+            50% { color: #ffd700; text-shadow: 0 0 4px #ffd700, 0 0 8px #ffd700, 0 0 12px #ffd700, 0 0 20px #fff; opacity: 0.9; }
+        }
+        .sparkle-diamond { display: inline-block; font-size: 14px; animation: sparkle 1.5s ease-in-out infinite; }
         th { background: #faf5f5; color: #8b5a5a; position: sticky; top: 0; z-index: 20; border-bottom: 2px solid #e8c4c4; }
         thead { position: sticky; top: 0; z-index: 19; }
         tr:hover { background: #fff9f8; }
@@ -772,9 +778,9 @@ function renderLowMerchants() {
                 const thirteenLMStores = ['H8217001', 'P0034002'];
                 let brandIcon = '';
                 if (thirteenLMStores.includes(storeId)) {
-                    brandIcon = '👑💎';
+                    brandIcon = '<span class="sparkle-diamond">◆</span>';
                 } else if (brandFlagshipStores.includes(storeId)) {
-                    brandIcon = '👑';
+                    brandIcon = '<span class="sparkle-diamond">★</span>';
                 }
                 return '<tr>' +
                     '<td>' + (storeId || 'N/A') + '</td>' +
