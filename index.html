@@ -446,12 +446,12 @@
             // Total row in thead (above column headers)
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="1" class="num" style="color:#ffd700;font-weight:bold;">💰 總計 Total</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(totalGMV)}</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(TARGET_GMV)}</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${totalRunRate}%</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
+                    <td colspan="1" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(TARGET_GMV)}</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">${totalRunRate}%</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
                 </tr>
                 <tr>
                     <th>月份 Month</th>
@@ -491,9 +491,9 @@
             // Total row in thead (above column headers)
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="2" class="num" style="color:#ffd700;font-weight:bold;">💰 總計 Total</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(totalGMV)}</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
+                    <td colspan="2" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
                 </tr>
                 <tr>
                     <th>店鋪代碼 Store Code</th>
@@ -550,8 +550,8 @@
             const totalGMV = displayData.reduce((sum, t) => sum + t.GMV, 0);
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="3" class="num" style="color:#ffd700;font-weight:bold;">💰 總計 Total</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td colspan="3" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
                 </tr>
                 <tr>
                     <th>排名 Rank</th>
@@ -608,8 +608,8 @@ function renderLowMerchants() {
             const totalGMV = displayData.reduce((sum, t) => sum + (t.GMV || 0), 0);
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="3" class="num" style="color:#ffd700;font-weight:bold;">💰 總計 Total</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td colspan="3" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
                 </tr>
                 <tr>
                     <th>排名 Rank</th>
@@ -721,19 +721,19 @@ function renderLowMerchants() {
             // Total row in thead (above column headers)
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="2" class="num" style="color:#ffd700;font-weight:bold;">💰 總計 Total (${storeCount} stores)</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(totalGMV)}</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">${formatNum(totalEarlyBird)}</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
-                    <td class="num" style="color:#ffd700;font-weight:bold;">-</td>
+                    <td colspan="2" class="num" style="color:#8b4040;font-weight:bold;">💰 總計 Total (${storeCount} stores)</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalGMV)}</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">${formatNum(totalEarlyBird)}</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
+                    <td class="num" style="color:#8b4040;font-weight:bold;">-</td>
                 </tr>
                 <tr>
                     <th>店鋪代碼 Store Code</th>
