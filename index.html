@@ -92,7 +92,7 @@
 </div>
 
 <div class="section">
-        <h2>📈 Target Store 月度總銷售額 (Session 6) <span class="section-date">📅 Target Store (JAN-JUN 2026)</span></h2>
+        <h2>📈 月度總銷售額 (Target Store) <span class="section-date">📅 JAN-JUN 2026</span></h2>
         <table id="targetStoreTable">
             <thead>
             </thead>
@@ -529,11 +529,11 @@ function filterByYear(data, year) {
             // Total row in thead (above column headers)
             thead.innerHTML = `
                 <tr class="total-row">
-                    <td colspan="6" class="num" style="text-align:right;color:#8b4040;font-weight:bold;">💰 總計 Total ${formatNum(totalGMV)} (Target: ${formatNum(totalTargetGMV)}, Run Rate: ${totalRunRate}%)</td>
+                    <td colspan="6" class="num" style="text-align:right;color:#8b4040;font-weight:bold;">💰 總計 Total ${formatNum(totalGMV)}</td>
                 </tr>
                 <tr>
                     <th>月份 Month</th>
-                    <th style="text-align:right;">GMV (Target Store)</th>
+                    <th style="text-align:right;">GMV</th>
                     <th style="text-align:right;">Target GMV</th>
                     <th style="text-align:right;">GMV Run Rate %</th>
                     <th style="text-align:right;">店鋪數 Stores</th>
