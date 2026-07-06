@@ -884,6 +884,15 @@ function renderLowMerchants() {
                 const storeId = s.primary_store_code;
                 const c = contactData[storeId] || {};
                 const displayGmv = s.GMV === 0 ? '$0.00' : formatNum(s.GMV);
+                // DEFAULT VALUES FOR NEW STORES
+                const defaultTargetNon = 'Target Store';
+                const defaultPaymentTerm = '1 times';
+                const defaultColorTape = '-';
+                const defaultContractType = '-';
+                const defaultEarlyBird = '-';
+                const defaultApiStore = '-';
+                const defaultJoinVip = '-';
+                const defaultJoinFs = '-';
                 // Brand flagship / 13LM icons
                 const brandFlagshipStores = ['B0961004','B1192001','B1252001','B1366001','B1709002','B1709003','B1709004','B1709005','B1709006','B1776001','H0228001','H0569002','H0569003','H0623004','H0883005','H5600001','H5858005','H5859005','H5859006','H6183001','H6521002','H6550001','H6754005','H6754006','H7775001','H8024001','H9569001','H9776001','S2818001','S2818002','S6477001'];
                 const thirteenLMStores = ['H8217001', 'P0034002', 'P0066001', 'P0066002', 'P0143002'];
@@ -900,7 +909,7 @@ function renderLowMerchants() {
                 const eb = s.early_bird;
                 const ebDisplay = (eb && eb !== '-' && !isNaN(eb)) ? '$' + parseFloat(eb).toLocaleString('en-US') : (eb || '-');
                 // Color tape with background
-                const colorTape = c.color_tape || '-';
+                const colorTape = c.color_tape || defaultColorTape;
                 const tapeClass = colorTape !== '-' ? 'tape-' + colorTape.toLowerCase() : '';
                 const tapeDisplay = tapeClass ? '<span class="' + tapeClass + '">' + colorTape + '</span>' : colorTape;
                 // Contract end date warning (80-90 days from today)
@@ -920,18 +929,18 @@ function renderLowMerchants() {
                 return '<tr>' +
                     '<td class="' + terminatedClass + '"><a href="https://www.hktvmall.com/hktv/s/' + storeId + '" target="_blank" class="store-link' + (isTerminated ? '' : '') + '">' + (storeId || 'N/A') + '</a></td>' +
                     '<td class="store-name' + terminatedClass + '" title="' + (s.primary_store_name_chi || '') + '">' + (s.primary_store_name_chi || 'N/A') + '</td>' +
-                    '<td style="text-align:center;font-size:16px;">' + brandIcon + '</td>' +
+                    '<td style="text-align:center;font-size:16px;">-</td>' +
                     '<td>' + displayGmv + '</td>' +
                     '<td>' + formatMom(s.mom_change) + '</td>' +
-                    '<td>' + (c.target_non || '-') + '</td>' +
+                    '<td>' + (c.target_non || defaultTargetNon) + '</td>' +
                     '<td>' + contractDisplay + '</td>' +
-                    '<td>' + (c.payment_term || '-') + '</td>' +
+                    '<td>' + (c.payment_term || defaultPaymentTerm) + '</td>' +
                     '<td style="text-align:center;">' + tapeDisplay + '</td>' +
-                    '<td>' + (c.contract_type || '-') + '</td>' +
+                    '<td>' + (c.contract_type || defaultContractType) + '</td>' +
                     '<td>' + ebDisplay + '</td>' +
-                    '<td>' + (c.api_store || '-') + '</td>' +
-                    '<td>' + (c.join_vip || '-') + '</td>' +
-                    '<td>' + (c.join_fs || '-') + '</td>' +
+                    '<td>' + (c.api_store || defaultApiStore) + '</td>' +
+                    '<td>' + (c.join_vip || defaultJoinVip) + '</td>' +
+                    '<td>' + (c.join_fs || defaultJoinFs) + '</td>' +
                 '</tr>';
             }).join('');
         }
