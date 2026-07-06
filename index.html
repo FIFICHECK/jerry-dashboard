@@ -95,13 +95,6 @@
         <h2>📈 Target Store 月度總銷售額 (Session 6) <span class="section-date">📅 Target Store (JAN-JUN 2026)</span></h2>
         <table id="targetStoreTable">
             <thead>
-                <tr>
-                    <th>月份 Month</th>
-                    <th style="text-align:right;">GMV (Target Store)</th>
-                    <th style="text-align:right;">Target GMV</th>
-                    <th style="text-align:right;">店鋪數 Stores</th>
-                    <th style="text-align:right;">MoM 升/跌幅</th>
-                </tr>
             </thead>
             <tbody></tbody>
         </table>
@@ -526,14 +519,35 @@ function filterByYear(data, year) {
         const targetStoreMonthData = [{"month":"2026-01","GMV":7654783.95,"Target_GMV":6699633,"store_count":75,"prev_gmv":null,"mom_change":null},{"month":"2026-02","GMV":6680965.66,"Target_GMV":6245829,"store_count":75,"prev_gmv":7654783.95,"mom_change":-12.7},{"month":"2026-03","GMV":7283373.17,"Target_GMV":6945499,"store_count":74,"prev_gmv":6680965.66,"mom_change":9.0},{"month":"2026-04","GMV":6958128.22,"Target_GMV":5976081,"store_count":77,"prev_gmv":7283373.17,"mom_change":-4.5},{"month":"2026-05","GMV":8759697.27,"Target_GMV":6343081,"store_count":79,"prev_gmv":6958128.22,"mom_change":25.9},{"month":"2026-06","GMV":8823430.45,"Target_GMV":6246556,"store_count":80,"prev_gmv":8759697.27,"mom_change":0.7}];
 
         function renderTargetStoreTable() {
+            const thead = document.querySelector('#targetStoreTable thead');
             const tbody = document.querySelector('#targetStoreTable tbody');
+            // Calculate totals
+            const totalGMV = targetStoreMonthData.reduce((sum, m) => sum + (m.GMV || 0), 0);
+            const totalTargetGMV = targetStoreMonthData.reduce((sum, m) => sum + (m.Target_GMV || 0), 0);
+            const totalStores = targetStoreMonthData.reduce((sum, m) => sum + (m.store_count || 0), 0);
+            const totalRunRate = totalTargetGMV > 0 ? ((totalGMV / totalTargetGMV) * 100).toFixed(1) : '0.0';
+            // Total row in thead (above column headers)
+            thead.innerHTML = `
+                <tr class="total-row">
+                    <td colspan="6" class="num" style="text-align:right;color:#8b4040;font-weight:bold;">💰 總計 Total ${formatNum(totalGMV)} (Target: ${formatNum(totalTargetGMV)}, Run Rate: ${totalRunRate}%)</td>
+                </tr>
+                <tr>
+                    <th>月份 Month</th>
+                    <th style="text-align:right;">GMV (Target Store)</th>
+                    <th style="text-align:right;">Target GMV</th>
+                    <th style="text-align:right;">GMV Run Rate %</th>
+                    <th style="text-align:right;">店鋪數 Stores</th>
+                    <th style="text-align:right;">MoM 升/跌幅</th>
+                </tr>
+            `;
             tbody.innerHTML = targetStoreMonthData.map(m => {
                 const momDisplay = m.mom_change !== null 
                     ? (m.mom_change > 0 
                         ? '<span style="color:#4caf50;font-weight:bold;">▲ +' + m.mom_change.toFixed(1) + '%</span>'
                         : '<span style="color:#f44336;font-weight:bold;">▼ ' + m.mom_change.toFixed(1) + '%</span>')
                     : '<span style="color:#888;">N/A</span>';
-                return `<tr><td>${m.month}</td><td style="text-align:right;">${formatNum(m.GMV)}</td><td style="text-align:right;">${formatNum(m.Target_GMV)}</td><td style="text-align:right;">${m.store_count}</td><td style="text-align:right;">${momDisplay}</td></tr>`;
+                const runRate = m.Target_GMV > 0 ? ((m.GMV / m.Target_GMV) * 100).toFixed(1) : '0.0';
+                return `<tr><td>${m.month}</td><td style="text-align:right;">${formatNum(m.GMV)}</td><td style="text-align:right;">${formatNum(m.Target_GMV)}</td><td style="text-align:right;">${formatRunRate(runRate)}</td><td style="text-align:right;">${m.store_count}</td><td style="text-align:right;">${momDisplay}</td></tr>`;
             }).join('');
         }
 function renderStoreMonthly() {
