@@ -93,6 +93,10 @@
 
 <div class="section">
         <h2>📈 月度總銷售額 (Target Store) <span class="section-date">📅 JAN-JUN 2026</span></h2>
+        <div class="filter-bar">
+            <label>月份 Month:</label>
+            <select id="s6Month"><option value="">全部 All</option></select>
+        </div>
         <table id="targetStoreTable">
             <thead>
             </thead>
@@ -521,10 +525,19 @@ function filterByYear(data, year) {
         function renderTargetStoreTable() {
             const thead = document.querySelector('#targetStoreTable thead');
             const tbody = document.querySelector('#targetStoreTable tbody');
+            const monthSelect = document.getElementById('s6Month');
+            const selectedMonth = monthSelect.value;
+            // Populate month dropdown
+            populateMonthDropdownForYear('s6Month', targetStoreMonthData, '');
+            // Filter by selected month
+            let filtered = targetStoreMonthData;
+            if (selectedMonth) {
+                filtered = filtered.filter(m => m.month === selectedMonth);
+            }
             // Calculate totals
-            const totalGMV = targetStoreMonthData.reduce((sum, m) => sum + (m.GMV || 0), 0);
-            const totalTargetGMV = targetStoreMonthData.reduce((sum, m) => sum + (m.Target_GMV || 0), 0);
-            const totalStores = targetStoreMonthData.reduce((sum, m) => sum + (m.store_count || 0), 0);
+            const totalGMV = filtered.reduce((sum, m) => sum + (m.GMV || 0), 0);
+            const totalTargetGMV = filtered.reduce((sum, m) => sum + (m.Target_GMV || 0), 0);
+            const totalStores = filtered.reduce((sum, m) => sum + (m.store_count || 0), 0);
             const totalRunRate = totalTargetGMV > 0 ? ((totalGMV / totalTargetGMV) * 100).toFixed(1) : '0.0';
             // Total row in thead (above column headers)
             thead.innerHTML = `
@@ -540,7 +553,7 @@ function filterByYear(data, year) {
                     <th style="text-align:right;">MoM 升/跌幅</th>
                 </tr>
             `;
-            tbody.innerHTML = targetStoreMonthData.map(m => {
+            tbody.innerHTML = filtered.map(m => {
                 const momDisplay = m.mom_change !== null 
                     ? (m.mom_change > 0 
                         ? '<span style="color:#4caf50;font-weight:bold;">▲ +' + m.mom_change.toFixed(1) + '%</span>'
@@ -933,6 +946,7 @@ function renderLowMerchants() {
         document.getElementById('s4Year').addEventListener('change', renderLowMerchants);
         document.getElementById('lowStartMonth').addEventListener('change', renderLowMerchants);
         document.getElementById('lowEndMonth').addEventListener('change', renderLowMerchants);
+        document.getElementById('s6Month').addEventListener('change', renderTargetStoreTable);
     </script><!-- trigger rebuild -->
 <!-- rebuild -->
 <!-- redeploy trigger Mon Jul  6 16:55:57 HKT 2026 -->
