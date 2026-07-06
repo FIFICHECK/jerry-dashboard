@@ -84,7 +84,24 @@
                 <tbody></tbody>
             </table>
         </div>
+    
+    <div class="section">
+        <h2>📈 Target Store 月度總銷售額 <span class="section-date">📅 Target Store (JAN-JUN 2026)</span></h2>
+        <table id="targetStoreTable">
+            <thead>
+                <tr>
+                    <th>月份 Month</th>
+                    <th style="text-align:right;">GMV (Target Store)</th>
+                    <th style="text-align:right;">Target GMV</th>
+                    <th style="text-align:right;">店鋪數 Stores</th>
+                    <th style="text-align:right;">MoM 升/跌幅</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
     </div>
+
+</div>
 
     <div class="section">
         <h2>🏪 店鋪每月銷售額 <span class="section-date">📅 數據截止: 2026-07-04</span></h2>
@@ -500,7 +517,22 @@ function filterByYear(data, year) {
             }).join('');
         }
 
-        function renderStoreMonthly() {
+        
+        // Target Store Monthly Data
+        const targetStoreMonthData = [{"month":"2026-01","GMV":7654783.95,"Target_GMV":6699633,"store_count":75,"prev_gmv":null,"mom_change":null},{"month":"2026-02","GMV":6680965.66,"Target_GMV":6245829,"store_count":75,"prev_gmv":7654783.95,"mom_change":-12.7},{"month":"2026-03","GMV":7283373.17,"Target_GMV":6945499,"store_count":74,"prev_gmv":6680965.66,"mom_change":9.0},{"month":"2026-04","GMV":6958128.22,"Target_GMV":5976081,"store_count":77,"prev_gmv":7283373.17,"mom_change":-4.5},{"month":"2026-05","GMV":8759697.27,"Target_GMV":6343081,"store_count":79,"prev_gmv":6958128.22,"mom_change":25.9},{"month":"2026-06","GMV":8823430.45,"Target_GMV":6246556,"store_count":80,"prev_gmv":8759697.27,"mom_change":0.7}];
+
+        function renderTargetStoreTable() {
+            const tbody = document.querySelector('#targetStoreTable tbody');
+            tbody.innerHTML = targetStoreMonthData.map(m => {
+                const momDisplay = m.mom_change !== null 
+                    ? (m.mom_change > 0 
+                        ? '<span style="color:#4caf50;font-weight:bold;">▲ +' + m.mom_change.toFixed(1) + '%</span>'
+                        : '<span style="color:#f44336;font-weight:bold;">▼ ' + m.mom_change.toFixed(1) + '%</span>')
+                    : '<span style="color:#888;">N/A</span>';
+                return `<tr><td>${m.month}</td><td style="text-align:right;">${formatNum(m.GMV)}</td><td style="text-align:right;">${formatNum(m.Target_GMV)}</td><td style="text-align:right;">${m.store_count}</td><td style="text-align:right;">${momDisplay}</td></tr>`;
+            }).join('');
+        }
+function renderStoreMonthly() {
             const storeSelect = document.getElementById('storeSelect');
             const monthSelect = document.getElementById('storeMonthSelect');
             const yearSelect = document.getElementById('s2Year');
@@ -868,7 +900,8 @@ function renderLowMerchants() {
         renderStoreMonthly();
         renderTopMerchants();
         renderLowMerchants();
-        renderStoreContact();
+        renderStoreContact()
+        renderTargetStoreTable();;
 
         // Year filter listeners
         document.getElementById('s1Year').addEventListener('change', () => { renderSummaryCards(); renderMonthTotal(); });
