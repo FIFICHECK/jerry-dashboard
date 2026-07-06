@@ -123,8 +123,10 @@
                 <option value="all">全部 All</option>
                 <option value="B0014001">B0014001</option><option value="B0217001">B0217001</option><option value="B0231002">B0231002</option><option value="B0231003">B0231003</option><option value="B0363002">B0363002</option><option value="B0501001">B0501001</option><option value="B0772001">B0772001</option><option value="B0961004">B0961004</option><option value="B0961005">B0961005</option><option value="B1102002">B1102002</option><option value="B1200001">B1200001</option><option value="B1252001">B1252001</option><option value="B1326001">B1326001</option><option value="B1346001">B1346001</option><option value="B1366001">B1366001</option><option value="B1463001">B1463001</option><option value="B1463002">B1463002</option><option value="B1463003">B1463003</option><option value="B1463004">B1463004</option><option value="B1561001">B1561001</option><option value="B1606001">B1606001</option><option value="B1608001">B1608001</option><option value="B1709001">B1709001</option><option value="B1709006">B1709006</option><option value="B1731001">B1731001</option><option value="B1742001">B1742001</option><option value="B1841001">B1841001</option><option value="B1870001">B1870001</option><option value="H0228001">H0228001</option><option value="H0389001">H0389001</option><option value="H0569001">H0569001</option><option value="H0569002">H0569002</option><option value="H0569003">H0569003</option><option value="H0623001">H0623001</option><option value="H0623003">H0623003</option><option value="H0623004">H0623004</option><option value="H0623006">H0623006</option><option value="H0623009">H0623009</option><option value="H0696023">H0696023</option><option value="H0883003">H0883003</option><option value="H0883004">H0883004</option><option value="H0883005">H0883005</option><option value="H5039001">H5039001</option><option value="H5039002">H5039002</option><option value="H5503001">H5503001</option><option value="H5503002">H5503002</option><option value="H5528001">H5528001</option><option value="H5528004">H5528004</option><option value="H5600001">H5600001</option><option value="H5859001">H5859001</option><option value="H5859004">H5859004</option><option value="H6092001">H6092001</option><option value="H6183001">H6183001</option><option value="H6521002">H6521002</option><option value="H6550001">H6550001</option><option value="H6588001">H6588001</option><option value="H6754001">H6754001</option><option value="H6754005">H6754005</option><option value="H6754006">H6754006</option><option value="H7047002">H7047002</option><option value="H7624002">H7624002</option><option value="H7650001">H7650001</option><option value="H7650002">H7650002</option><option value="H7650003">H7650003</option><option value="H7775001">H7775001</option><option value="H8024001">H8024001</option><option value="H8217001">H8217001</option><option value="H8427001">H8427001</option><option value="H8931001">H8931001</option><option value="H8931004">H8931004</option><option value="H9002002">H9002002</option><option value="H9308001">H9308001</option><option value="H9308002">H9308002</option><option value="H9407001">H9407001</option><option value="H9776001">H9776001</option><option value="P0034002">P0034002</option><option value="P0143002">P0143002</option><option value="S2347001">S2347001</option><option value="S2818002">S2818002</option><option value="S2818003">S2818003</option><option value="S6258001">S6258001</option><option value="S6383001">S6383001</option><option value="S6477001">S6477001</option><option value="S6501001">S6501001</option><option value="S9002001">S9002001</option>
             </select>
-            <label>月份 Month:</label>
-            <select id="storeMonthSelect"><option value="">全部 All</option></select>
+            <label>月份範圍:</label>
+            <select id="storeStartMonth"><option value="">全部 All</option></select>
+            <label>至</label>
+            <select id="storeEndMonth"><option value="">全部 All</option></select>
         </div>
         <div class="table-container">
             <table id="storeTable">
@@ -576,25 +578,40 @@ function filterByYear(data, year) {
         }
 function renderStoreMonthly() {
             const storeSelect = document.getElementById('storeSelect');
-            const monthSelect = document.getElementById('storeMonthSelect');
+            const startMonthSelect = document.getElementById('storeStartMonth');
+            const endMonthSelect = document.getElementById('storeEndMonth');
             const yearSelect = document.getElementById('s2Year');
             const thead = document.querySelector('#storeTable thead');
             const tbody = document.querySelector('#storeTable tbody');
             const selectedYear = yearSelect.value;
             const selectedStore = storeSelect.value;
-            const selectedMonth = monthSelect.value;
-            populateMonthDropdownForYear('storeMonthSelect', storeData, selectedYear);
+            const startMonth = startMonthSelect.value;
+            const endMonth = endMonthSelect.value;
+            populateMonthDropdownForYear('storeStartMonth', storeData, selectedYear);
+            populateMonthDropdownForYear('storeEndMonth', storeData, selectedYear);
             let filtered = filterByYear(storeData, selectedYear);
-            if (selectedMonth) {
-                filtered = filtered.filter(s => s.month === selectedMonth);
+            if (startMonth || endMonth) {
+                filtered = filtered.filter(s => {
+                    if (startMonth && endMonth) return s.month >= startMonth && s.month <= endMonth;
+                    if (startMonth) return s.month >= startMonth;
+                    if (endMonth) return s.month <= endMonth;
+                    return true;
+                });
             }
             if (selectedStore && selectedStore !== 'all') {
                 filtered = filtered.filter(s => s.primary_store_code === selectedStore);
             }
-            filtered = filtered.sort((a, b) => b.GMV - a.GMV);
-            // Calculate total
-            const totalGMV = filtered.reduce((sum, s) => sum + (s.GMV || 0), 0);
-            // Total row in thead (above column headers)
+            // Aggregate GMV by store across the range
+            const storeGMVMap = {};
+            filtered.forEach(s => {
+                const code = s.primary_store_code;
+                if (!storeGMVMap[code]) {
+                    storeGMVMap[code] = { primary_store_code: code, primary_store_name_chi: s.primary_store_name_chi, GMV: 0 };
+                }
+                storeGMVMap[code].GMV += s.GMV || 0;
+            });
+            let displayData = Object.values(storeGMVMap).sort((a, b) => b.GMV - a.GMV);
+            const totalGMV = displayData.reduce((sum, s) => sum + s.GMV, 0);
             thead.innerHTML = `
                 <tr class="total-row">
                     <td colspan="4" class="num" style="text-align:right;color:#8b4040;font-weight:bold;">💰 總計 Total ${formatNum(totalGMV)}</td>
@@ -606,12 +623,12 @@ function renderStoreMonthly() {
                     <th style="text-align:right;">MoM 升/跌幅</th>
                 </tr>
             `;
-            tbody.innerHTML = filtered.map(s => `
+            tbody.innerHTML = displayData.map(s => `
                 <tr>
                     <td><a href="https://www.hktvmall.com/hktv/s/${s.primary_store_code}" target="_blank" class="store-link">${s.primary_store_code || 'N/A'}</a></td>
                     <td class="store-name" title="${s.primary_store_name_chi || ''}">${s.primary_store_name_chi || 'N/A'}</td>
                     <td style="text-align:right;">${formatNum(s.GMV)}</td>
-                    <td style="text-align:right;">${formatMom(s.mom_change)}</td>
+                    <td style="text-align:right;">—</td>
                 </tr>
             `).join('');
         }
@@ -945,6 +962,12 @@ function renderLowMerchants() {
             }).join('');
         }
 
+        // Set default month filters to current month on load
+        var now = new Date();
+        var currentYear = now.getFullYear();
+        var currentMonth = String(now.getMonth() + 1).padStart(2, '0');
+        var currentMonthVal = currentYear + '-' + currentMonth; // e.g. "2026-07"
+
         // Initial render on page load
         renderSummaryCards();
         renderMonthTotal();
@@ -954,12 +977,23 @@ function renderLowMerchants() {
         renderStoreContact()
         renderTargetStoreTable();;
 
+        // After renders, set default month selections to current month
+        document.getElementById('monthSelect').value = currentMonthVal;
+        document.getElementById('storeStartMonth').value = currentMonthVal;
+        document.getElementById('storeEndMonth').value = currentMonthVal;
+        document.getElementById('s6Month').value = currentMonthVal;
+        // Re-render with defaults
+        renderMonthTotal();
+        renderStoreMonthly();
+        renderTargetStoreTable();
+
         // Year filter listeners
         document.getElementById('s1Year').addEventListener('change', () => { renderSummaryCards(); renderMonthTotal(); });
         document.getElementById('monthSelect').addEventListener('change', renderMonthTotal);
         document.getElementById('s2Year').addEventListener('change', renderStoreMonthly);
         document.getElementById('storeSelect').addEventListener('change', renderStoreMonthly);
-        document.getElementById('storeMonthSelect').addEventListener('change', renderStoreMonthly);
+        document.getElementById('storeStartMonth').addEventListener('change', renderStoreMonthly);
+        document.getElementById('storeEndMonth').addEventListener('change', renderStoreMonthly);
         document.getElementById('s3Year').addEventListener('change', renderTopMerchants);
         document.getElementById('topStartMonth').addEventListener('change', renderTopMerchants);
         document.getElementById('topEndMonth').addEventListener('change', renderTopMerchants);
