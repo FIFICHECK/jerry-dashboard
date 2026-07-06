@@ -488,7 +488,7 @@
             `;
             tbody.innerHTML = filtered.map(m => {
                 const runRate = m.GMV > 0 ? ((m.GMV / TARGET_GMV) * 100).toFixed(1) : '0.0';
-                return `<tr><td>${m.month}</td><td style="text-align:right;">${formatNum(m.GMV)}</td><td style="text-align:right;">${formatNum(TARGET_GMV)}</td><td style="text-align:right;">${runRate}%</td><td style="text-align:right;">${m.store_count}</td><td style="text-align:right;">${formatMom(m.mom_change)}</td></tr>`;
+                return `<tr><td>${m.month}</td><td style="text-align:right;">${formatNum(m.GMV)}</td><td style="text-align:right;">${formatNum(m.GP)}</td><td style="text-align:right;">${runRate}%</td><td style="text-align:right;">${m.store_count}</td><td style="text-align:right;">${formatMom(m.mom_change)}</td></tr>`;
             }).join('');
         }
 
