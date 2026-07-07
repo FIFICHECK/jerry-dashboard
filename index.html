@@ -971,7 +971,7 @@ function renderLowMerchants() {
                 return '<tr>' +
                     '<td class="' + terminatedClass + '"><a href="https://www.hktvmall.com/hktv/s/' + storeId + '" target="_blank" class="store-link' + (isTerminated ? '' : '') + '">' + (storeId || 'N/A') + '</a></td>' +
                     '<td class="store-name' + terminatedClass + '" title="' + (s.primary_store_name_chi || '') + '">' + (s.primary_store_name_chi || 'N/A') + '</td>' +
-                    '<td style="text-align:center;font-size:16px;">-</td>' +
+                    '<td style="text-align:center;font-size:16px;">' + brandIcon + '</td>' +
                     '<td>' + displayGmv + '</td>' +
                     '<td>' + formatMom(s.mom_change) + '</td>' +
                     '<td>' + (c.target_non || defaultTargetNon) + '</td>' +
