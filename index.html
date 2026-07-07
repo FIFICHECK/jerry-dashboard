@@ -647,7 +647,7 @@ function renderStoreMonthly() {
                 if (isSingleMonth && prevGMV > 0 && currGMV > 0) {
                     momVal = ((currGMV - prevGMV) / prevGMV * 100);
                 }
-                const momDisplay = momVal !== null ? formatMom(momVal) : '\u2014';
+                const momDisplay = momVal !== null ? formatMom(momVal) : '-';
                 return `<tr>
                     <td><a href="https://www.hktvmall.com/hktv/s/${s.primary_store_code}" target="_blank" class="store-link">${s.primary_store_code || 'N/A'}</a></td>
                     <td class="store-name" title="${s.primary_store_name_chi || ''}">${s.primary_store_name_chi || 'N/A'}</td>
