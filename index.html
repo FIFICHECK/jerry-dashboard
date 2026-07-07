@@ -590,6 +590,7 @@ function renderStoreMonthly() {
             populateMonthDropdownForYear('storeStartMonth', storeData, selectedYear);
             populateMonthDropdownForYear('storeEndMonth', storeData, selectedYear);
             let yearFiltered = filterByYear(storeData, selectedYear);
+            let filtered = yearFiltered;
             if (startMonth || endMonth) {
                 filtered = yearFiltered.filter(s => {
                     if (startMonth && endMonth) return s.month >= startMonth && s.month <= endMonth;
