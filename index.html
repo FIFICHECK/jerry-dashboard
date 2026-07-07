@@ -626,7 +626,7 @@ function renderStoreMonthly() {
             // Build prev month GMV map for MoM calculation
             let prevMonthGMVMap = {};
             if (displayData.length > 0 && displayData[0].GMV > 0) {
-                const currMonth = startMonth || endMonth || (filtered.length > 0 ? filtered.reduce((max, s) => s.month > max.month ? s : max, filtered[0]).month : null);
+                const currMonth = endMonth || startMonth || (filtered.length > 0 ? filtered.reduce((max, s) => s.month > max.month ? s : max, filtered[0]).month : null);
                 if (currMonth) {
                     const [cy, cm] = currMonth.split('-').map(Number);
                     const pmDate = new Date(cy, cm - 2, 1);
