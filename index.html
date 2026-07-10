@@ -614,26 +614,28 @@
             XLSX.writeFile(wb, 'Monthly-Total_' + datePart + '.xlsx');
         }
         // Export S6 月度總銷售額 (Target Store)
-        function s6ExportExcel() {
+                function s6ExportExcel() {
             if (typeof XLSX === 'undefined') { alert('Excel library loading, please try again.'); return; }
             var sel = document.getElementById('s6Month');
             var selectedMonth = sel.value;
-            var targetStores = ['B0961004','B0961005','B1252001','B1608001','H0569001','H0883003','H5600001','H6092001','H6183001','H6588001','H8024001','S6258001','S9002001','H0228001','H0623003','H7650001','H7775001','H8427001','H0389001','B0501001','H0569002','H0569003','H0623004','H0623009','H0883004','H0883005','H5039001','H5039002','H5503001','H5503002','H5528001','H5528004','H5859001','H5859004','H6521002','H6550001','H6754001','H6754005','H6754006','H7047002','H7624002','H7650002','H7650003','H8217001','H8931001','H8931004','H9002002','H9308001','H9308002','H9407001','H9569001','H9776001','B0014001','B0217001','B0231002','B0231003','B0363002','B0772001','B1102002','B1200001','B1326001','B1346001','B1366001','B1463001','B1463002','B1463003','B1463004','B1561001','B1606001','B1709001','B1709006','B1731001','B1742001','B1841001','B1870001','B1789001','B0501002','P0034002','P0066001','P0066002','P0143002','S2347001','S2818001','S2818002','S2818003','S6383001','S6477001','S6501001','H3606002','H4302001','H4286001','B1001001','B1192001','H5859005','H5859006','H6683001','H6754003','H0623006','H0696023','H0623001'];
-            var filtered = storeData.slice();
-            if (selectedMonth) filtered = filtered.filter(function(s) { return s.month === selectedMonth; });
-            var storeMap = {};
-            filtered.forEach(function(s) {
-                var code = s.primary_store_code;
-                if (targetStores.indexOf(code) >= 0) {
-                    if (!storeMap[code]) storeMap[code] = { code: code, name: s.primary_store_name_chi, GMV: 0 };
-                    storeMap[code].GMV += s.GMV || 0;
-                }
+            var filtered = targetStoreMonthData.slice();
+            if (selectedMonth) {
+                filtered = filtered.filter(function(m) { return m.month === selectedMonth; });
+            }
+            var rows = [['Month', 'GMV', 'Target GMV', 'GMV Run Rate %', 'Stores', 'MoM']];
+            filtered.forEach(function(m) {
+                var runRate = m.Target_GMV > 0 ? ((m.GMV / m.Target_GMV) * 100).toFixed(1) + '%' : '0.0%';
+                var momText = (m.mom_change !== null && m.mom_change !== undefined && !isNaN(m.mom_change)) ? m.mom_change.toFixed(1) + '%' : 'N/A';
+                rows.push([m.month, m.GMV || 0, m.Target_GMV || 0, runRate, m.store_count || 0, momText]);
             });
-            var data = Object.values(storeMap).sort(function(a,b) { return b.GMV - a.GMV; });
-            var rows = [['Store Code', 'Store Name', 'GMV']];
-            data.forEach(function(s) { rows.push([s.code, s.name, s.GMV]); });
+            // Add total row
+            var totalGMV = filtered.reduce(function(sum, m) { return sum + (m.GMV || 0); }, 0);
+            var totalTarget = filtered.reduce(function(sum, m) { return sum + (m.Target_GMV || 0); }, 0);
+            var totalRate = totalTarget > 0 ? ((totalGMV / totalTarget) * 100).toFixed(1) + '%' : '0.0%';
+            var totalStores = filtered.reduce(function(sum, m) { return sum + (m.store_count || 0); }, 0);
+            rows.push(['Total', totalGMV, totalTarget, totalRate, totalStores, '']);
             var ws = XLSX.utils.aoa_to_sheet(rows);
-            ws['!cols'] = [{wch:15},{wch:30},{wch:15}];
+            ws['!cols'] = [{wch:12},{wch:18},{wch:18},{wch:18},{wch:10},{wch:12}];
             var wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Target Store');
             var datePart = selectedMonth || 'All';
