@@ -304,17 +304,10 @@
 <option value="S9002001">S9002001</option>
             </select>
     
-            <label>月份 Month:</label>
-            <select id="s5Month">
-                <option value="">全部 All</option>
-                <option value="2026-01">2026-01</option>
-                <option value="2026-02">2026-02</option>
-                <option value="2026-03">2026-03</option>
-                <option value="2026-04">2026-04</option>
-                <option value="2026-05">2026-05</option>
-                <option value="2026-06">2026-06</option>
-                <option value="2026-07">2026-07</option>
-            </select>
+            <label>開始月份 From:</label>
+            <select id="s5StartMonth"><option value="">全部 All</option></select>
+            <label>至 To:</label>
+            <select id="s5EndMonth"><option value="">全部 All</option></select>
     
             <label>Target/Non:</label>
             <select id="s5Target">
@@ -851,8 +844,10 @@ function renderLowMerchants() {
 
 // Section 5 filter listeners// Section 5 filter listeners
         document.getElementById('s5Year').addEventListener('change', renderStoreContact);
+        document.getElementById('s5StartMonth').addEventListener('change', renderStoreContact);
+        document.getElementById('s5EndMonth').addEventListener('change', renderStoreContact);
         document.getElementById('s5Store').addEventListener('change', renderStoreContact);
-        document.getElementById('s5Month').addEventListener('change', renderStoreContact);
+        
         document.getElementById('s5Target').addEventListener('change', renderStoreContact);
         document.getElementById('s5ContractMonth').addEventListener('change', renderStoreContact);
         document.getElementById('s5Payment').addEventListener('change', renderStoreContact);
@@ -867,7 +862,8 @@ function renderLowMerchants() {
         function renderStoreContact() {
             const yearSel = document.getElementById('s5Year');
             const storeSel = document.getElementById('s5Store');
-            const monthSel = document.getElementById('s5Month');
+            const startMonthSel = document.getElementById('s5StartMonth');
+            const endMonthSel = document.getElementById('s5EndMonth');
             const targetSel = document.getElementById('s5Target');
             const contractMonthSel = document.getElementById('s5ContractMonth');
             const paymentSel = document.getElementById('s5Payment');
@@ -882,7 +878,8 @@ function renderLowMerchants() {
             const tbody = document.querySelector('#storeContactTable tbody');
             const selectedYear = yearSel.value;
             const selectedStore = storeSel.value;
-            const selectedMonth = monthSel.value;
+            const selectedStartMonth = startMonthSel.value;
+            const selectedEndMonth = endMonthSel.value;
             const selectedTarget = targetSel.value;
             const selectedContractMonth = contractMonthSel.value;
             const selectedPayment = paymentSel.value;
@@ -898,7 +895,7 @@ function renderLowMerchants() {
             let allStores = Object.keys(contactData).map(storeId => {
                 const c = contactData[storeId];
                 // Find in storeData if exists
-                const storeRecord = storeData.find(s => s.primary_store_code === storeId && (!selectedYear || (s.month && s.month.startsWith(selectedYear))) && (!selectedMonth || s.month === selectedMonth));
+                const storeRecord = storeData.find(s => s.primary_store_code === storeId && (!selectedYear || (s.month && s.month.startsWith(selectedYear))) && (!selectedStartMonth || s.month >= selectedStartMonth) && (!selectedEndMonth || s.month <= selectedEndMonth));
                 return {
                     primary_store_code: storeId,
                     primary_store_name_chi: c.store_name || (storeRecord ? storeRecord.primary_store_name_chi : '') || '',
@@ -1097,6 +1094,8 @@ function renderLowMerchants() {
         document.getElementById('topEndMonth').value = currentMonthVal;
         document.getElementById('lowStartMonth').value = currentMonthVal;
         document.getElementById('lowEndMonth').value = currentMonthVal;
+        document.getElementById('s5StartMonth').value = currentMonthVal;
+        document.getElementById('s5EndMonth').value = currentMonthVal;
         document.getElementById('s6Month').value = ''; // All
 
         // Re-render with defaults
