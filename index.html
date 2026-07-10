@@ -478,14 +478,15 @@
         var s7Loading = false;
         var s7TopLimit = 0; // 0=All, 50=Top 50, 100=Top 100
         var s7SortBy = 'gmv-desc'; // gmv-desc, gmv-asc, qty-desc, qty-asc
+
         // Helper: calculate MoM for SKU
-        function s7GetMom(sku, prevMap, prevMonth) {
+        function s7GetMoM(sku, prevMap, prevMonth) {
             if (!prevMonth || !prevMap || !prevMap[sku.sc]) return '<span style="color:#888;">-</span>';
             var prevGMV = prevMap[sku.sc][prevMonth];
             if (!prevGMV || prevGMV <= 0) return '<span style="color:#888;">N/A</span>';
             var mom = ((sku.gmv - prevGMV) / prevGMV * 100);
-            if (mom > 0) return '<span style="color:#4caf50;font-weight:bold;">\u25b2 +' + )) + '%</span>';
-            if (mom < 0) return '<span style="color:#f44336;font-weight:bold;">\u25bc ' + )) + '%</span>';
+            if (mom > 0) return '<span style="color:#4caf50;font-weight:bold;">\u25b2 +' + mom.toFixed(1) + '%</span>';
+            if (mom < 0) return '<span style="color:#f44336;font-weight:bold;">\u25bc ' + mom.toFixed(1) + '%</span>';
             return '<span style="color:#888;">0.0%</span>';
         }
         // Helper: highlight active button group
@@ -511,14 +512,12 @@
                 alert('Excel library loading, please try again in a moment.');
                 return;
             }
-            // Get current filter state
             var s7StartMonthSel = document.getElementById('s7StartMonth');
             var s7EndMonthSel = document.getElementById('s7EndMonth');
             var selectedS7Start = s7StartMonthSel ? s7StartMonthSel.value : '';
             var selectedS7End = s7EndMonthSel ? s7EndMonthSel.value : '';
             var searchInput = document.getElementById('s7Search');
             var searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
-            // Same filtering as renderTopSKUList
             var sourceData = (s7AllData && s7AllData.length > 0) ? s7AllData : skuData;
             var filtered = sourceData;
             if (selectedS7Start || selectedS7End) {
@@ -534,12 +533,10 @@
                     return s.sc.toLowerCase().includes(searchTerm) || s.sn.toLowerCase().includes(searchTerm);
                 });
             }
-            // Apply sorting
             if (s7SortBy === 'gmv-desc') filtered.sort(function(a,b) { return b.gmv - a.gmv; });
             else if (s7SortBy === 'gmv-asc') filtered.sort(function(a,b) { return a.gmv - b.gmv; });
             else if (s7SortBy === 'qty-desc') filtered.sort(function(a,b) { return b.qty - a.qty; });
             else if (s7SortBy === 'qty-asc') filtered.sort(function(a,b) { return a.qty - b.qty; });
-            // Build prevMonth map for MoM
             var s7PrevMonthMap = {};
             sourceData.forEach(function(s) {
                 if (!s7PrevMonthMap[s.sc]) s7PrevMonthMap[s.sc] = {};
@@ -547,11 +544,9 @@
             });
             var s7IsSingleMonth = selectedS7Start && selectedS7End && selectedS7Start === selectedS7End;
             var s7PrevMonth = s7IsSingleMonth ? getPrevMonth(selectedS7Start) : null;
-            // Apply top limit
             if (s7TopLimit > 0 && filtered.length > s7TopLimit) {
                 filtered = filtered.slice(0, s7TopLimit);
             }
-            // Build data rows for Excel
             var rows = [['SKU Code', 'SKU Name', 'GMV', 'Qty', 'MoM']];
             filtered.forEach(function(s) {
                 var momText = '-';
@@ -566,7 +561,6 @@
                 }
                 rows.push([s.sc, s.sn, s.gmv, s.qty, momText]);
             });
-            // Create workbook
             var ws = XLSX.utils.aoa_to_sheet(rows);
             ws['!cols'] = [
                 {wch: 30},
@@ -577,7 +571,6 @@
             ];
             var wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'SKU List');
-            // Build filename
             var datePart = '';
             if (selectedS7Start && selectedS7End) {
                 if (selectedS7Start === selectedS7End) {
@@ -593,6 +586,7 @@
             var filename = 'TOP-SKU_' + datePart + limitLabel + '_' + sortLabel + '.xlsx';
             XLSX.writeFile(wb, filename);
         }
+
 
         // Load full SKU data from external JSON file
         (function loadFullSkuData() {
@@ -835,9 +829,9 @@ function renderStoreMonthly() {
                     if (prevGMV && prevGMV > 0) {
                         const mom = ((s.GMV - prevGMV) / prevGMV * 100);
                         if (mom > 0) {
-                            momDisplay = '<span style="color:#4caf50;font-weight:bold;">▲ +' + )) + '%</span>';
+                            momDisplay = '<span style="color:#4caf50;font-weight:bold;">▲ +' + mom.toFixed(1) + '%</span>';
                         } else {
-                            momDisplay = '<span style="color:#f44336;font-weight:bold;">▼ ' + )) + '%</span>';
+                            momDisplay = '<span style="color:#f44336;font-weight:bold;">▼ ' + mom.toFixed(1) + '%</span>';
                         }
                     } else {
                         momDisplay = '<span style="color:#888;">N/A</span>';
@@ -1019,17 +1013,6 @@ function renderLowMerchants() {
                 filtered.sort(function(a, b) { return a.qty - b.qty; });
             }
 
-            // Build prevMonth MoM map from full source data (before any filtering)
-            var s7PrevMonthMap = {};
-            sourceData.forEach(function(s) {
-                if (!s7PrevMonthMap[s.sc]) {
-                    s7PrevMonthMap[s.sc] = {};
-                }
-                s7PrevMonthMap[s.sc][s.m] = s.gmv;
-            });
-            var s7IsSingleMonth = selectedS7Start && selectedS7End && selectedS7Start === selectedS7End;
-            var s7PrevMonth = s7IsSingleMonth ? getPrevMonth(selectedS7Start) : null;
-
             // Apply top limit filter
             if (s7TopLimit > 0 && filtered.length > s7TopLimit) {
                 filtered = filtered.slice(0, s7TopLimit);
@@ -1045,6 +1028,18 @@ function renderLowMerchants() {
 
             var totalGMV = filtered.reduce(function(sum, s) { return sum + s.gmv; }, 0);
             var totalQty = filtered.reduce(function(sum, s) { return sum + s.qty; }, 0);
+
+            // Build prevMonth MoM map from full source data
+            var s7PrevMonthMap = {};
+            sourceData.forEach(function(s) {
+                if (!s7PrevMonthMap[s.sc]) {
+                    s7PrevMonthMap[s.sc] = {};
+                }
+                s7PrevMonthMap[s.sc][s.m] = s.gmv;
+            });
+            var s7IsSingleMonth = selectedS7Start && selectedS7End && selectedS7Start === selectedS7End;
+            var s7PrevMonth = s7IsSingleMonth ? getPrevMonth(selectedS7Start) : null;
+
 
             // Total row in thead
             var loadingMsg = s7Loading ? ' \u23f3 \u8f09\u5165\u4e2d...' : '';
@@ -1070,7 +1065,7 @@ function renderLowMerchants() {
                     '<td class="store-name" title="' + s.sn + '">' + s.sn + '</td>' +
                     '<td style="text-align:right;">' + formatNum(s.gmv) + '</td>' +
                     '<td style="text-align:right;">' + s.qty.toLocaleString('en-US') + '</td>' +
-                    '<td style="text-align:right;">' + s7GetMom(s, s7PrevMonthMap, s7PrevMonth) + '</td>' +
+                    '<td style="text-align:right;">' + s7GetMoM(s, s7PrevMonthMap, s7PrevMonth) + '</td>' +
                     '</tr>';
             }
             tbody.innerHTML = html;
