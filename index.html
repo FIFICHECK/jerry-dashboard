@@ -76,6 +76,7 @@
             </select>
             <label>月份 Month:</label>
             <select id="monthSelect"><option value="">全部 All</option></select>
+            <button onclick="s1ExportExcel()" style="padding:6px 16px;border:1px solid #4caf50;border-radius:8px;cursor:pointer;background:#4caf50;color:#fff;font-weight:bold;">📥 下載 Excel</button>
         </div>
         <div class="table-container">
             <table id="monthTotalTable">
@@ -103,7 +104,7 @@
         <div class="filter-bar">
             <label>月份 Month:</label>
             <select id="s6Month"><option value="">全部 All</option></select>
-        </div>
+            <button onclick="s6ExportExcel()" style="padding:6px 16px;border:1px solid #4caf50;border-radius:8px;cursor:pointer;background:#4caf50;color:#fff;font-weight:bold;">📥 下載 Excel</button>
         <table id="targetStoreTable">
             <thead>
             </thead>
@@ -129,7 +130,7 @@
             <select id="storeStartMonth"><option value="">全部 All</option></select>
             <label>至</label>
             <select id="storeEndMonth"><option value="">全部 All</option></select>
-        </div>
+            <button onclick="s2ExportExcel()" style="padding:6px 16px;border:1px solid #4caf50;border-radius:8px;cursor:pointer;background:#4caf50;color:#fff;font-weight:bold;">📥 下載 Excel</button>
         <div class="table-container">
             <table id="storeTable">
                 <thead>
@@ -158,7 +159,7 @@
             <select id="topStartMonth"><option value="">全部 All</option></select>
             <label>至</label>
             <select id="topEndMonth"><option value="">全部 All</option></select>
-        </div>
+            <button onclick="s3ExportExcel()" style="padding:6px 16px;border:1px solid #4caf50;border-radius:8px;cursor:pointer;background:#4caf50;color:#fff;font-weight:bold;">📥 下載 Excel</button>
         <div class="table-container">
             <table id="topTable">
                 <thead>
@@ -187,7 +188,7 @@
             <select id="lowStartMonth"><option value="">全部 All</option></select>
             <label>至</label>
             <select id="lowEndMonth"><option value="">全部 All</option></select>
-        </div>
+            <button onclick="s4ExportExcel()" style="padding:6px 16px;border:1px solid #4caf50;border-radius:8px;cursor:pointer;background:#4caf50;color:#fff;font-weight:bold;">📥 下載 Excel</button>
         <div class="table-container">
             <table id="lowTable">
                 <thead>
@@ -400,7 +401,7 @@
                 <option value="brand">旗艦店</option>
                 <option value="no-icon">-</option>
             </select>
-    
+                <button onclick="s5ExportExcel()" style="padding:6px 16px;border:1px solid #4caf50;border-radius:8px;cursor:pointer;background:#4caf50;color:#fff;font-weight:bold;">📥 下載 Excel</button>
         </div>
         <div class="table-container">
             <table id="storeContactTable">
@@ -585,6 +586,266 @@
             var sortLabel = s7SortBy.replace('-', '_').toUpperCase();
             var filename = 'TOP-SKU_' + datePart + limitLabel + '_' + sortLabel + '.xlsx';
             XLSX.writeFile(wb, filename);
+        }
+        // Export S1 月度總銷售額
+        function s1ExportExcel() {
+            if (typeof XLSX === 'undefined') { alert('Excel library loading, please try again.'); return; }
+            var sel = document.getElementById('monthSelect');
+            var yearSel = document.getElementById('s1Year');
+            var selectedYear = yearSel.value;
+            var selectedMonth = sel.value;
+            var filtered = monthData.slice();
+            if (selectedYear) filtered = filtered.filter(function(m) { return m.month && m.month.startsWith(selectedYear); });
+            if (selectedMonth) filtered = filtered.filter(function(m) { return m.month === selectedMonth; });
+            var rows = [['Month', 'GMV', 'GP', 'Stores', 'MoM']];
+            filtered.forEach(function(m) {
+                var momText = (m.mom_change !== null && m.mom_change !== undefined && !isNaN(m.mom_change)) ? m.mom_change.toFixed(1) + '%' : 'N/A';
+                rows.push([m.month, m.GMV || 0, m.GP || 0, m.store_count || 0, momText]);
+            });
+            var ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{wch:12},{wch:15},{wch:15},{wch:10},{wch:12}];
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Monthly Total');
+            var datePart = selectedMonth || (selectedYear || 'All');
+            XLSX.writeFile(wb, 'Monthly-Total_' + datePart + '.xlsx');
+        }
+        // Export S6 月度總銷售額 (Target Store)
+        function s6ExportExcel() {
+            if (typeof XLSX === 'undefined') { alert('Excel library loading, please try again.'); return; }
+            var sel = document.getElementById('s6Month');
+            var selectedMonth = sel.value;
+            var targetStores = ['B0961004','B0961005','B1252001','B1608001','H0569001','H0883003','H5600001','H6092001','H6183001','H6588001','H8024001','S6258001','S9002001','H0228001','H0623003','H7650001','H7775001','H8427001','H0389001','B0501001','H0569002','H0569003','H0623004','H0623009','H0883004','H0883005','H5039001','H5039002','H5503001','H5503002','H5528001','H5528004','H5859001','H5859004','H6521002','H6550001','H6754001','H6754005','H6754006','H7047002','H7624002','H7650002','H7650003','H8217001','H8931001','H8931004','H9002002','H9308001','H9308002','H9407001','H9569001','H9776001','B0014001','B0217001','B0231002','B0231003','B0363002','B0772001','B1102002','B1200001','B1326001','B1346001','B1366001','B1463001','B1463002','B1463003','B1463004','B1561001','B1606001','B1709001','B1709006','B1731001','B1742001','B1841001','B1870001','B1789001','B0501002','P0034002','P0066001','P0066002','P0143002','S2347001','S2818001','S2818002','S2818003','S6383001','S6477001','S6501001','H3606002','H4302001','H4286001','B1001001','B1192001','H5859005','H5859006','H6683001','H6754003','H0623006','H0696023','H0623001'];
+            var filtered = storeData.slice();
+            if (selectedMonth) filtered = filtered.filter(function(s) { return s.month === selectedMonth; });
+            var storeMap = {};
+            filtered.forEach(function(s) {
+                var code = s.primary_store_code;
+                if (targetStores.indexOf(code) >= 0) {
+                    if (!storeMap[code]) storeMap[code] = { code: code, name: s.primary_store_name_chi, GMV: 0 };
+                    storeMap[code].GMV += s.GMV || 0;
+                }
+            });
+            var data = Object.values(storeMap).sort(function(a,b) { return b.GMV - a.GMV; });
+            var rows = [['Store Code', 'Store Name', 'GMV']];
+            data.forEach(function(s) { rows.push([s.code, s.name, s.GMV]); });
+            var ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{wch:15},{wch:30},{wch:15}];
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Target Store');
+            var datePart = selectedMonth || 'All';
+            XLSX.writeFile(wb, 'Target-Store_' + datePart + '.xlsx');
+        }
+        // Export S2 店鋪每月銷售額
+        function s2ExportExcel() {
+            if (typeof XLSX === 'undefined') { alert('Excel library loading, please try again.'); return; }
+            var yearSel = document.getElementById('s2Year');
+            var storeSel = document.getElementById('storeSelect');
+            var startSel = document.getElementById('storeStartMonth');
+            var endSel = document.getElementById('storeEndMonth');
+            var selectedYear = yearSel.value;
+            var selectedStore = storeSel.value;
+            var startMonth = startSel.value;
+            var endMonth = endSel.value;
+            var filtered = storeData.slice();
+            if (selectedYear) filtered = filtered.filter(function(s) { return s.month && s.month.startsWith(selectedYear); });
+            if (selectedStore && selectedStore !== 'all') filtered = filtered.filter(function(s) { return s.primary_store_code === selectedStore; });
+            if (startMonth || endMonth) {
+                filtered = filtered.filter(function(s) {
+                    if (startMonth && endMonth) return s.month >= startMonth && s.month <= endMonth;
+                    if (startMonth) return s.month >= startMonth;
+                    if (endMonth) return s.month <= endMonth;
+                    return true;
+                });
+            }
+            var storeMap = {};
+            filtered.forEach(function(s) {
+                var code = s.primary_store_code;
+                if (!storeMap[code]) storeMap[code] = { code: code, name: s.primary_store_name_chi, GMV: 0 };
+                storeMap[code].GMV += s.GMV || 0;
+            });
+            var data = Object.values(storeMap).sort(function(a,b) { return b.GMV - a.GMV; });
+            // Build prevMonth MoM
+            var yearFiltered = storeData.slice();
+            if (selectedYear) yearFiltered = yearFiltered.filter(function(s) { return s.month && s.month.startsWith(selectedYear); });
+            var prevMap = {};
+            yearFiltered.forEach(function(s) {
+                if (!prevMap[s.primary_store_code]) prevMap[s.primary_store_code] = {};
+                prevMap[s.primary_store_code][s.month] = s.GMV;
+            });
+            var isSingleMonth = startMonth && endMonth && startMonth === endMonth;
+            var prevMonth = isSingleMonth ? getPrevMonth(startMonth) : null;
+            var rows = [['Store Code', 'Store Name', 'GMV', 'MoM']];
+            data.forEach(function(s) {
+                var momText = '-';
+                if (isSingleMonth && prevMonth) {
+                    var prevG = (prevMap[s.code] || {})[prevMonth];
+                    if (prevG && prevG > 0) {
+                        var mom = ((s.GMV - prevG) / prevG * 100);
+                        momText = mom.toFixed(1) + '%';
+                    } else { momText = 'N/A'; }
+                }
+                rows.push([s.code, s.name, s.GMV, momText]);
+            });
+            var ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{wch:15},{wch:30},{wch:15},{wch:12}];
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Store Monthly');
+            var datePart = startMonth && endMonth ? (startMonth === endMonth ? startMonth : startMonth + '~' + endMonth) : 'All';
+            XLSX.writeFile(wb, 'Store-Monthly_' + datePart + '.xlsx');
+        }
+        // Export S3 排名最高50間店
+        function s3ExportExcel() {
+            if (typeof XLSX === 'undefined') { alert('Excel library loading, please try again.'); return; }
+            var yearSel = document.getElementById('s3Year');
+            var startSel = document.getElementById('topStartMonth');
+            var endSel = document.getElementById('topEndMonth');
+            var selectedYear = yearSel.value;
+            var startMonth = startSel.value;
+            var endMonth = endSel.value;
+            var filtered = storeData.slice();
+            if (selectedYear) filtered = filtered.filter(function(s) { return s.month && s.month.startsWith(selectedYear); });
+            if (startMonth || endMonth) {
+                filtered = filtered.filter(function(s) {
+                    if (startMonth && endMonth) return s.month >= startMonth && s.month <= endMonth;
+                    if (startMonth) return s.month >= startMonth;
+                    if (endMonth) return s.month <= endMonth;
+                    return true;
+                });
+            }
+            var storeMap = {};
+            filtered.forEach(function(s) {
+                var code = s.primary_store_code;
+                if (!storeMap[code]) storeMap[code] = { code: code, name: s.primary_store_name_chi, GMV: 0 };
+                storeMap[code].GMV += s.GMV || 0;
+            });
+            var data = Object.values(storeMap).sort(function(a,b) { return b.GMV - a.GMV; }).slice(0, 50);
+            var rows = [['Rank', 'Store Code', 'Store Name', 'GMV']];
+            data.forEach(function(s, i) { rows.push([i+1, s.code, s.name, s.GMV]); });
+            var ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{wch:8},{wch:15},{wch:30},{wch:15}];
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Top 50 Merchants');
+            var datePart = startMonth && endMonth ? (startMonth === endMonth ? startMonth : startMonth + '~' + endMonth) : 'All';
+            XLSX.writeFile(wb, 'Top-Merchants_' + datePart + '.xlsx');
+        }
+        // Export S4 排名最差50間店
+        function s4ExportExcel() {
+            if (typeof XLSX === 'undefined') { alert('Excel library loading, please try again.'); return; }
+            var yearSel = document.getElementById('s4Year');
+            var startSel = document.getElementById('lowStartMonth');
+            var endSel = document.getElementById('lowEndMonth');
+            var selectedYear = yearSel.value;
+            var startMonth = startSel.value;
+            var endMonth = endSel.value;
+            var filtered = storeData.slice();
+            if (selectedYear) filtered = filtered.filter(function(s) { return s.month && s.month.startsWith(selectedYear); });
+            if (startMonth || endMonth) {
+                filtered = filtered.filter(function(s) {
+                    if (startMonth && endMonth) return s.month >= startMonth && s.month <= endMonth;
+                    if (startMonth) return s.month >= startMonth;
+                    if (endMonth) return s.month <= endMonth;
+                    return true;
+                });
+            }
+            var storeMap = {};
+            filtered.forEach(function(s) {
+                var code = s.primary_store_code;
+                if (!storeMap[code]) storeMap[code] = { code: code, name: s.primary_store_name_chi, GMV: 0 };
+                storeMap[code].GMV += s.GMV || 0;
+            });
+            var data = Object.values(storeMap).sort(function(a,b) { return a.GMV - b.GMV; }).slice(0, 50);
+            var rows = [['Rank', 'Store Code', 'Store Name', 'GMV']];
+            data.forEach(function(s, i) { rows.push([i+1, s.code, s.name, s.GMV]); });
+            var ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{wch:8},{wch:15},{wch:30},{wch:15}];
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Low 50 Merchants');
+            var datePart = startMonth && endMonth ? (startMonth === endMonth ? startMonth : startMonth + '~' + endMonth) : 'All';
+            XLSX.writeFile(wb, 'Low-Merchants_' + datePart + '.xlsx');
+        }
+        // Export S5 商戶資料
+        function s5ExportExcel() {
+            if (typeof XLSX === 'undefined') { alert('Excel library loading, please try again.'); return; }
+            var yearSel = document.getElementById('s5Year');
+            var storeSel = document.getElementById('s5Store');
+            var monthSel = document.getElementById('s5Month');
+            var targetSel = document.getElementById('s5Target');
+            var contractMonthSel = document.getElementById('s5ContractMonth');
+            var paymentSel = document.getElementById('s5Payment');
+            var colorSel = document.getElementById('s5Color');
+            var contractTypeSel = document.getElementById('s5ContractType');
+            var earlyBirdSel = document.getElementById('s5EarlyBird');
+            var apiSel = document.getElementById('s5Api');
+            var vipSel = document.getElementById('s5Vip');
+            var fsSel = document.getElementById('s5Fs');
+            var brandSel = document.getElementById('s5Brand');
+            var selectedYear = yearSel.value;
+            var selectedStore = storeSel.value;
+            var selectedMonth = monthSel.value;
+            var selectedTarget = targetSel.value;
+            var selectedContractMonth = contractMonthSel.value;
+            var selectedPayment = paymentSel.value;
+            var selectedColor = colorSel.value;
+            var selectedContractType = contractTypeSel.value;
+            var selectedEarlyBird = earlyBirdSel.value;
+            var selectedApi = apiSel.value;
+            var selectedVip = vipSel.value;
+            var selectedFs = fsSel.value;
+            var selectedBrand = brandSel.value;
+            var brandFlagshipStores = ['B0961004','B1192001','B1252001','B1366001','B1709002','B1709003','B1709004','B1709005','B1709006','B1776001','H0228001','H0569002','H0569003','H0623004','H0883005','H5600001','H5858005','H5859005','H5859006','H6183001','H6521002','H6550001','H6754005','H6754006','H7775001','H8024001','H9569001','H9776001','S2818001','S2818002','S6477001'];
+            var thirteenLMStores = ['H8217001','P0034002','P0066001','P0066002','P0143002'];
+            var allStores = Object.keys(contactData).map(function(storeId) {
+                var c = contactData[storeId] || {};
+                var storeRecord = storeData.find(function(s) { return s.primary_store_code === storeId && (!selectedYear || (s.month && s.month.startsWith(selectedYear))) && (!selectedMonth || s.month === selectedMonth); });
+                return {
+                    code: storeId,
+                    name: c.store_name || (storeRecord ? storeRecord.primary_store_name_chi : '') || '',
+                    GMV: storeRecord ? storeRecord.GMV : 0,
+                    early_bird: c.early_bird || '',
+                    target_non: c.target_non || 'Target Store',
+                    contract_end: c.contract_end || '-',
+                    payment_term: c.payment_term || '1 times',
+                    color_tape: c.color_tape || '-',
+                    contract_type: c.contract_type || '-',
+                    api_store: c.api_store || '-',
+                    join_vip: c.join_vip || '-',
+                    join_fs: c.join_fs || '-'
+                };
+            });
+            var filtered = allStores;
+            if (selectedStore) filtered = filtered.filter(function(s) { return s.code === selectedStore; });
+            if (selectedTarget) filtered = filtered.filter(function(s) { return s.target_non === selectedTarget; });
+            if (selectedContractMonth) filtered = filtered.filter(function(s) { return s.contract_end.substring(5,7) === selectedContractMonth; });
+            if (selectedPayment) filtered = filtered.filter(function(s) { return s.payment_term === selectedPayment; });
+            if (selectedColor) filtered = filtered.filter(function(s) { return s.color_tape === selectedColor; });
+            if (selectedContractType) filtered = filtered.filter(function(s) { return s.contract_type === selectedContractType; });
+            if (selectedEarlyBird === 'has_value') filtered = filtered.filter(function(s) { return s.early_bird && s.early_bird !== '-'; });
+            if (selectedEarlyBird === 'no_value') filtered = filtered.filter(function(s) { return !s.early_bird || s.early_bird === '-'; });
+            if (selectedApi === 'API') filtered = filtered.filter(function(s) { return s.api_store === 'API'; });
+            if (selectedApi === 'non-api') filtered = filtered.filter(function(s) { return s.api_store !== 'API'; });
+            if (selectedVip === 'Y') filtered = filtered.filter(function(s) { return s.join_vip === 'Y'; });
+            if (selectedVip === 'non-vip') filtered = filtered.filter(function(s) { return s.join_vip !== 'Y'; });
+            if (selectedFs === 'Y') filtered = filtered.filter(function(s) { return s.join_fs === 'Y'; });
+            if (selectedFs === 'non-fs') filtered = filtered.filter(function(s) { return s.join_fs !== 'Y'; });
+            if (selectedBrand === '13LM') filtered = filtered.filter(function(s) { return thirteenLMStores.indexOf(s.code) >= 0; });
+            else if (selectedBrand === 'brand') filtered = filtered.filter(function(s) { return brandFlagshipStores.indexOf(s.code) >= 0; });
+            else if (selectedBrand === 'no-icon') filtered = filtered.filter(function(s) { return thirteenLMStores.indexOf(s.code) < 0 && brandFlagshipStores.indexOf(s.code) < 0; });
+            filtered.sort(function(a,b) {
+                var preA = a.code.match(/^[A-Z]/)[0];
+                var preB = b.code.match(/^[A-Z]/)[0];
+                if (preA !== preB) return preA.localeCompare(preB);
+                return parseInt(a.code.slice(1),10) - parseInt(b.code.slice(1),10);
+            });
+            var rows = [['Store Code','Store Name','Brand','GMV','Target/Non','Contract End','Payment','Color Tape','Contract Type','Early Bird','API','VIP','FS']];
+            filtered.forEach(function(s) {
+                var brandIcon = thirteenLMStores.indexOf(s.code) >= 0 ? '13LM+Brand' : (brandFlagshipStores.indexOf(s.code) >= 0 ? 'Brand' : '-');
+                rows.push([s.code, s.name, brandIcon, s.GMV, s.target_non, s.contract_end, s.payment_term, s.color_tape, s.contract_type, s.early_bird, s.api_store, s.join_vip, s.join_fs]);
+            });
+            var ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [{wch:15},{wch:30},{wch:12},{wch:15},{wch:15},{wch:14},{wch:12},{wch:12},{wch:15},{wch:12},{wch:8},{wch:8},{wch:8}];
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Store Contact');
+            XLSX.writeFile(wb, 'Store-Contact_' + (selectedYear || 'All') + '.xlsx');
         }
 
 
