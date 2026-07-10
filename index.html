@@ -438,6 +438,11 @@
             <button id="s7Btn50" onclick="s7TopLimit=50;s7CurrentPage=1;renderTopSKUList();" style="padding:6px 14px;border:1px solid #e8d0d0;border-radius:8px;cursor:pointer;background:#fff9f5;">Top 50</button>
             <button id="s7Btn100" onclick="s7TopLimit=100;s7CurrentPage=1;renderTopSKUList();" style="padding:6px 14px;border:1px solid #e8d0d0;border-radius:8px;cursor:pointer;background:#fff9f5;">Top 100</button>
             <button id="s7BtnAll" onclick="s7TopLimit=0;s7CurrentPage=1;renderTopSKUList();" style="padding:6px 14px;border:1px solid #c76b6b;border-radius:8px;cursor:pointer;background:#c76b6b;color:#fff;font-weight:bold;">All SKU</button>
+            <label>排序:</label>
+            <button onclick="s7SortBy='gmv-desc';s7CurrentPage=1;renderTopSKUList();" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">GMV ▼</button>
+            <button onclick="s7SortBy='gmv-asc';s7CurrentPage=1;renderTopSKUList();" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">GMV ▲</button>
+            <button onclick="s7SortBy='qty-desc';s7CurrentPage=1;renderTopSKUList();" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">Qty ▼</button>
+            <button onclick="s7SortBy='qty-asc';s7CurrentPage=1;renderTopSKUList();" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">Qty ▲</button>
         </div>
         <div class="table-container">
             <table id="topSKUTable">
@@ -467,6 +472,7 @@
         var s7RowsPerPage = 50;
         var s7Loading = false;
         var s7TopLimit = 0; // 0=All, 50=Top 50, 100=Top 100
+        var s7SortBy = 'gmv-desc'; // gmv-desc, gmv-asc, qty-desc, qty-asc
 
         // Load full SKU data from external JSON file
         (function loadFullSkuData() {
@@ -880,6 +886,17 @@ function renderLowMerchants() {
                     return s.sc.toLowerCase().includes(searchTerm) || 
                            s.sn.toLowerCase().includes(searchTerm);
                 });
+            }
+
+            // Apply sorting
+            if (s7SortBy === 'gmv-desc') {
+                filtered.sort(function(a, b) { return b.gmv - a.gmv; });
+            } else if (s7SortBy === 'gmv-asc') {
+                filtered.sort(function(a, b) { return a.gmv - b.gmv; });
+            } else if (s7SortBy === 'qty-desc') {
+                filtered.sort(function(a, b) { return b.qty - a.qty; });
+            } else if (s7SortBy === 'qty-asc') {
+                filtered.sort(function(a, b) { return a.qty - b.qty; });
             }
 
             // Apply top limit filter
