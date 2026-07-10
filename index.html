@@ -58,6 +58,8 @@
         #topTable th:nth-child(3), #topTable td:nth-child(3),
         #lowTable th:nth-child(3), #lowTable td:nth-child(3) { width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     </style>
+    <!-- SheetJS for Excel export -->
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <h1>📊 Jerry Store Dashboard</h1>
@@ -445,6 +447,7 @@
             <button onclick="s7SortBy='qty-desc';s7CurrentPage=1;renderTopSKUList();s7ActivateBtn(this,'#s7SortBtns button');" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">Qty ▼</button>
             <button onclick="s7SortBy='qty-asc';s7CurrentPage=1;renderTopSKUList();s7ActivateBtn(this,'#s7SortBtns button');" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">Qty ▲</button>
             </span>
+            <button onclick="s7ExportExcel()" style="padding:6px 16px;border:1px solid #4caf50;border-radius:8px;cursor:pointer;background:#4caf50;color:#fff;font-weight:bold;">📥 下載 Excel</button>
         </div>
         <div class="table-container">
             <table id="topSKUTable">
@@ -481,8 +484,8 @@
             var prevGMV = prevMap[sku.sc][prevMonth];
             if (!prevGMV || prevGMV <= 0) return '<span style="color:#888;">N/A</span>';
             var mom = ((sku.gmv - prevGMV) / prevGMV * 100);
-            if (mom > 0) return '<span style="color:#4caf50;font-weight:bold;">\u25b2 +' + mom.toFixed(1) + '%</span>';
-            if (mom < 0) return '<span style="color:#f44336;font-weight:bold;">\u25bc ' + mom.toFixed(1) + '%</span>';
+            if (mom > 0) return '<span style="color:#4caf50;font-weight:bold;">\u25b2 +' + )) + '%</span>';
+            if (mom < 0) return '<span style="color:#f44336;font-weight:bold;">\u25bc ' + )) + '%</span>';
             return '<span style="color:#888;">0.0%</span>';
         }
         // Helper: highlight active button group
@@ -496,6 +499,100 @@
                     b.style.fontWeight = 'normal'; b.style.border = '1px solid #e8d0d0';
                 }
             });
+        }
+        // Helper: get month label for filename
+        function s7GetMonthLabel(m) {
+            var labels = {'01':'JAN','02':'FEB','03':'MAR','04':'APR','05':'MAY','06':'JUN','07':'JUL','08':'AUG','09':'SEP','10':'OCT','11':'NOV','12':'DEC'};
+            return labels[m] || m;
+        }
+        // Export S7 filtered data to Excel
+        // Export S7 filtered data to Excel
+        function s7ExportExcel() {
+            if (typeof XLSX === 'undefined') {
+                alert('Excel library loading, please try again in a moment.');
+                return;
+            }
+            // Get current filter state
+            var s7StartMonthSel = document.getElementById('s7StartMonth');
+            var s7EndMonthSel = document.getElementById('s7EndMonth');
+            var selectedS7Start = s7StartMonthSel ? s7StartMonthSel.value : '';
+            var selectedS7End = s7EndMonthSel ? s7EndMonthSel.value : '';
+            var searchInput = document.getElementById('s7Search');
+            var searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : '';
+            // Same filtering as renderTopSKUList
+            var sourceData = (s7AllData && s7AllData.length > 0) ? s7AllData : skuData;
+            var filtered = sourceData;
+            if (selectedS7Start || selectedS7End) {
+                filtered = filtered.filter(function(s) {
+                    if (selectedS7Start && selectedS7End) return s.m >= selectedS7Start && s.m <= selectedS7End;
+                    if (selectedS7Start) return s.m >= selectedS7Start;
+                    if (selectedS7End) return s.m <= selectedS7End;
+                    return true;
+                });
+            }
+            if (searchTerm) {
+                filtered = filtered.filter(function(s) {
+                    return s.sc.toLowerCase().includes(searchTerm) || s.sn.toLowerCase().includes(searchTerm);
+                });
+            }
+            // Apply sorting
+            if (s7SortBy === 'gmv-desc') filtered.sort(function(a,b) { return b.gmv - a.gmv; });
+            else if (s7SortBy === 'gmv-asc') filtered.sort(function(a,b) { return a.gmv - b.gmv; });
+            else if (s7SortBy === 'qty-desc') filtered.sort(function(a,b) { return b.qty - a.qty; });
+            else if (s7SortBy === 'qty-asc') filtered.sort(function(a,b) { return a.qty - b.qty; });
+            // Build prevMonth map for MoM
+            var s7PrevMonthMap = {};
+            sourceData.forEach(function(s) {
+                if (!s7PrevMonthMap[s.sc]) s7PrevMonthMap[s.sc] = {};
+                s7PrevMonthMap[s.sc][s.m] = s.gmv;
+            });
+            var s7IsSingleMonth = selectedS7Start && selectedS7End && selectedS7Start === selectedS7End;
+            var s7PrevMonth = s7IsSingleMonth ? getPrevMonth(selectedS7Start) : null;
+            // Apply top limit
+            if (s7TopLimit > 0 && filtered.length > s7TopLimit) {
+                filtered = filtered.slice(0, s7TopLimit);
+            }
+            // Build data rows for Excel
+            var rows = [['SKU Code', 'SKU Name', 'GMV', 'Qty', 'MoM']];
+            filtered.forEach(function(s) {
+                var momText = '-';
+                if (s7IsSingleMonth && s7PrevMonth) {
+                    var prevGMV = (s7PrevMonthMap[s.sc] || {})[s7PrevMonth];
+                    if (prevGMV && prevGMV > 0) {
+                        var mom = ((s.gmv - prevGMV) / prevGMV * 100);
+                        momText = mom.toFixed(1) + '%';
+                    } else {
+                        momText = 'N/A';
+                    }
+                }
+                rows.push([s.sc, s.sn, s.gmv, s.qty, momText]);
+            });
+            // Create workbook
+            var ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = [
+                {wch: 30},
+                {wch: 50},
+                {wch: 15},
+                {wch: 10},
+                {wch: 15}
+            ];
+            var wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'SKU List');
+            // Build filename
+            var datePart = '';
+            if (selectedS7Start && selectedS7End) {
+                if (selectedS7Start === selectedS7End) {
+                    datePart = s7GetMonthLabel(selectedS7Start.slice(5,7)) + selectedS7Start.slice(2,4);
+                } else {
+                    datePart = s7GetMonthLabel(selectedS7Start.slice(5,7)) + selectedS7Start.slice(2,4) + '~' + s7GetMonthLabel(selectedS7End.slice(5,7)) + selectedS7End.slice(2,4);
+                }
+            } else {
+                datePart = 'All';
+            }
+            var limitLabel = s7TopLimit > 0 ? '_TOP' + s7TopLimit : '_All';
+            var sortLabel = s7SortBy.replace('-', '_').toUpperCase();
+            var filename = 'TOP-SKU_' + datePart + limitLabel + '_' + sortLabel + '.xlsx';
+            XLSX.writeFile(wb, filename);
         }
 
         // Load full SKU data from external JSON file
@@ -739,9 +836,9 @@ function renderStoreMonthly() {
                     if (prevGMV && prevGMV > 0) {
                         const mom = ((s.GMV - prevGMV) / prevGMV * 100);
                         if (mom > 0) {
-                            momDisplay = '<span style="color:#4caf50;font-weight:bold;">▲ +' + mom.toFixed(1) + '%</span>';
+                            momDisplay = '<span style="color:#4caf50;font-weight:bold;">▲ +' + )) + '%</span>';
                         } else {
-                            momDisplay = '<span style="color:#f44336;font-weight:bold;">▼ ' + mom.toFixed(1) + '%</span>';
+                            momDisplay = '<span style="color:#f44336;font-weight:bold;">▼ ' + )) + '%</span>';
                         }
                     } else {
                         momDisplay = '<span style="color:#888;">N/A</span>';
