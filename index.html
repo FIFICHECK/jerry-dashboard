@@ -857,9 +857,9 @@ function renderLowMerchants() {
             const selectedS7Start = s7StartMonthSel ? s7StartMonthSel.value : '';
             const selectedS7End = s7EndMonthSel ? s7EndMonthSel.value : '';
 
-            // Populate month dropdowns from skuData months (once)
+            // Populate month dropdowns from storeData months (once)
             if (s7StartMonthSel && s7StartMonthSel.options.length <= 1) {
-                var s7Months = [...new Set(skuData.map(function(s) { return s.m; }).filter(function(m) { return m; }))].sort();
+                var s7Months = [...new Set(storeData.map(function(s) { return s.month; }).filter(function(m) { return m; }))].sort();
                 s7StartMonthSel.innerHTML = '<option value="">\u5168\u90e8 All</option>' + s7Months.map(function(m) { return '<option value="' + m + '">' + m + '</option>'; }).join('');
                 s7EndMonthSel.innerHTML = '<option value="">\u5168\u90e8 All</option>' + s7Months.map(function(m) { return '<option value="' + m + '">' + m + '</option>'; }).join('');
             }
