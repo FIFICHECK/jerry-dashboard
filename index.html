@@ -435,14 +435,16 @@
             <label>至 To:</label>
             <select id="s7EndMonth"><option value="">全部 All</option></select>
             <label>顯示:</label>
-            <button id="s7Btn50" onclick="s7TopLimit=50;s7CurrentPage=1;renderTopSKUList();" style="padding:6px 14px;border:1px solid #e8d0d0;border-radius:8px;cursor:pointer;background:#fff9f5;">Top 50</button>
-            <button id="s7Btn100" onclick="s7TopLimit=100;s7CurrentPage=1;renderTopSKUList();" style="padding:6px 14px;border:1px solid #e8d0d0;border-radius:8px;cursor:pointer;background:#fff9f5;">Top 100</button>
-            <button id="s7BtnAll" onclick="s7TopLimit=0;s7CurrentPage=1;renderTopSKUList();" style="padding:6px 14px;border:1px solid #c76b6b;border-radius:8px;cursor:pointer;background:#c76b6b;color:#fff;font-weight:bold;">All SKU</button>
+            <button id="s7Btn50" onclick="s7TopLimit=50;s7CurrentPage=1;renderTopSKUList();s7ActivateBtn(this,'#s7Btn50,#s7Btn100,#s7BtnAll');" style="padding:6px 14px;border:1px solid #e8d0d0;border-radius:8px;cursor:pointer;background:#fff9f5;">Top 50</button>
+            <button id="s7Btn100" onclick="s7TopLimit=100;s7CurrentPage=1;renderTopSKUList();s7ActivateBtn(this,'#s7Btn50,#s7Btn100,#s7BtnAll');" style="padding:6px 14px;border:1px solid #e8d0d0;border-radius:8px;cursor:pointer;background:#fff9f5;">Top 100</button>
+            <button id="s7BtnAll" onclick="s7TopLimit=0;s7CurrentPage=1;renderTopSKUList();s7ActivateBtn(this,'#s7Btn50,#s7Btn100,#s7BtnAll');" style="padding:6px 14px;border:1px solid #c76b6b;border-radius:8px;cursor:pointer;background:#c76b6b;color:#fff;font-weight:bold;">All SKU</button>
             <label>排序:</label>
-            <button onclick="s7SortBy='gmv-desc';s7CurrentPage=1;renderTopSKUList();" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">GMV ▼</button>
-            <button onclick="s7SortBy='gmv-asc';s7CurrentPage=1;renderTopSKUList();" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">GMV ▲</button>
-            <button onclick="s7SortBy='qty-desc';s7CurrentPage=1;renderTopSKUList();" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">Qty ▼</button>
-            <button onclick="s7SortBy='qty-asc';s7CurrentPage=1;renderTopSKUList();" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">Qty ▲</button>
+            <span id="s7SortBtns">
+            <button onclick="s7SortBy='gmv-desc';s7CurrentPage=1;renderTopSKUList();s7ActivateBtn(this,'#s7SortBtns button');" style="padding:4px 10px;border:1px solid #c76b6b;border-radius:6px;cursor:pointer;background:#c76b6b;color:#fff;font-size:0.85em;" id="s7SortGmvDesc">GMV ▼</button>
+            <button onclick="s7SortBy='gmv-asc';s7CurrentPage=1;renderTopSKUList();s7ActivateBtn(this,'#s7SortBtns button');" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">GMV ▲</button>
+            <button onclick="s7SortBy='qty-desc';s7CurrentPage=1;renderTopSKUList();s7ActivateBtn(this,'#s7SortBtns button');" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">Qty ▼</button>
+            <button onclick="s7SortBy='qty-asc';s7CurrentPage=1;renderTopSKUList();s7ActivateBtn(this,'#s7SortBtns button');" style="padding:4px 10px;border:1px solid #e8d0d0;border-radius:6px;cursor:pointer;background:#fff9f5;font-size:0.85em;">Qty ▲</button>
+            </span>
         </div>
         <div class="table-container">
             <table id="topSKUTable">
@@ -473,6 +475,18 @@
         var s7Loading = false;
         var s7TopLimit = 0; // 0=All, 50=Top 50, 100=Top 100
         var s7SortBy = 'gmv-desc'; // gmv-desc, gmv-asc, qty-desc, qty-asc
+        // Helper: highlight active button group
+        function s7ActivateBtn(clicked, group) {
+            document.querySelectorAll(group).forEach(function(b) {
+                if (b === clicked) {
+                    b.style.background = '#c76b6b'; b.style.color = '#fff';
+                    b.style.fontWeight = 'bold'; b.style.border = '1px solid #c76b6b';
+                } else {
+                    b.style.background = '#fff9f5'; b.style.color = 'inherit';
+                    b.style.fontWeight = 'normal'; b.style.border = '1px solid #e8d0d0';
+                }
+            });
+        }
 
         // Load full SKU data from external JSON file
         (function loadFullSkuData() {
