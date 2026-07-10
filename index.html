@@ -640,7 +640,7 @@
             XLSX.writeFile(wb, 'Target-Store_' + datePart + '.xlsx');
         }
         // Export S2 店鋪每月銷售額
-        function s2ExportExcel() {
+                function s2ExportExcel() {
             if (typeof XLSX === 'undefined') { alert('Excel library loading, please try again.'); return; }
             var yearSel = document.getElementById('s2Year');
             var storeSel = document.getElementById('storeSelect');
@@ -661,37 +661,35 @@
                     return true;
                 });
             }
+            // Get all months in range (sorted)
+            var monthSet = {};
+            filtered.forEach(function(s) { if (s.month) monthSet[s.month] = true; });
+            var months = Object.keys(monthSet).sort();
+            // Build per-store per-month GMV
             var storeMap = {};
             filtered.forEach(function(s) {
                 var code = s.primary_store_code;
-                if (!storeMap[code]) storeMap[code] = { code: code, name: s.primary_store_name_chi, GMV: 0 };
-                storeMap[code].GMV += s.GMV || 0;
+                if (!storeMap[code]) storeMap[code] = { code: code, name: s.primary_store_name_chi, monthly: {}, total: 0 };
+                storeMap[code].monthly[s.month] = (storeMap[code].monthly[s.month] || 0) + (s.GMV || 0);
+                storeMap[code].total += s.GMV || 0;
             });
-            var data = Object.values(storeMap).sort(function(a,b) { return b.GMV - a.GMV; });
-            // Build prevMonth MoM
-            var yearFiltered = storeData.slice();
-            if (selectedYear) yearFiltered = yearFiltered.filter(function(s) { return s.month && s.month.startsWith(selectedYear); });
-            var prevMap = {};
-            yearFiltered.forEach(function(s) {
-                if (!prevMap[s.primary_store_code]) prevMap[s.primary_store_code] = {};
-                prevMap[s.primary_store_code][s.month] = s.GMV;
-            });
-            var isSingleMonth = startMonth && endMonth && startMonth === endMonth;
-            var prevMonth = isSingleMonth ? getPrevMonth(startMonth) : null;
-            var rows = [['Store Code', 'Store Name', 'GMV', 'MoM']];
+            var data = Object.values(storeMap).sort(function(a,b) { return b.total - a.total; });
+            // Build header row: Store Code | Store Name | Month1 | Month2 | ... | Total GMV
+            var header = ['Store Code', 'Store Name'];
+            months.forEach(function(m) { header.push(m); });
+            header.push('Total GMV');
+            var rows = [header];
             data.forEach(function(s) {
-                var momText = '-';
-                if (isSingleMonth && prevMonth) {
-                    var prevG = (prevMap[s.code] || {})[prevMonth];
-                    if (prevG && prevG > 0) {
-                        var mom = ((s.GMV - prevG) / prevG * 100);
-                        momText = mom.toFixed(1) + '%';
-                    } else { momText = 'N/A'; }
-                }
-                rows.push([s.code, s.name, s.GMV, momText]);
+                var row = [s.code, s.name];
+                months.forEach(function(m) { row.push(s.monthly[m] || 0); });
+                row.push(s.total);
+                rows.push(row);
             });
             var ws = XLSX.utils.aoa_to_sheet(rows);
-            ws['!cols'] = [{wch:15},{wch:30},{wch:15},{wch:12}];
+            var cols = [{wch:15},{wch:30}];
+            months.forEach(function() { cols.push({wch:18}); });
+            cols.push({wch:18});
+            ws['!cols'] = cols;
             var wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, 'Store Monthly');
             var datePart = startMonth && endMonth ? (startMonth === endMonth ? startMonth : startMonth + '~' + endMonth) : 'All';
