@@ -15,6 +15,7 @@
         .filter-bar label { color: #8b7d7d; }
         .filter-bar select { background: #fff9f5; color: #5d5d5d; border: 1px solid #e8d0d0; padding: 8px 12px; border-radius: 8px; min-width: 150px; }
         .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .chart-container { background: #fff9f5; border-radius: 12px; padding: 15px; margin-bottom: 15px; border: 1px solid #e8d0d0; position: relative; height: 220px; }
         .card { background: linear-gradient(135deg, #fff9f5, #f5e8e8); padding: 20px; border-radius: 15px; text-align: center; cursor: pointer; border: 1px solid #f0e0e0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
         .card:hover { background: linear-gradient(135deg, #f5e8e8, #f0d8d8); }
         .card h3 { color: #a08080; font-size: 14px; margin-bottom: 10px; }
@@ -60,12 +61,17 @@
     </style>
     <!-- SheetJS for Excel export -->
     <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+    <!-- Chart.js for trend line -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 </head>
 <body>
     <h1>📊 Jerry Store Dashboard</h1>
 
     <div class="section">
         <h2>📈 月度總銷售額 <span class="section-date">📅 數據截止: 2026-07-11</span></h2>
+        <div class="chart-container">
+            <canvas id="gmvTrendChart"></canvas>
+        </div>
         <div class="summary-cards" id="summaryCards"></div>
         <div class="filter-bar">
             <label>年份 Year:</label>
@@ -929,6 +935,70 @@
             if (months.includes(current)) sel.value = current;
         }
 
+        function renderGMVTrendChart() {
+            var canvas = document.getElementById('gmvTrendChart');
+            if (!canvas) return;
+            var ctx = canvas.getContext('2d');
+            var yearSelect = document.getElementById('s1Year');
+            var selectedYear = yearSelect.value;
+            var filtered = filterByYear(monthData, selectedYear);
+            filtered = filtered.slice().sort(function(a, b) { return a.month.localeCompare(b.month); });
+            if (filtered.length < 2) { return; }
+            var labels = filtered.map(function(m) {
+                var parts = m.month.split('-');
+                var months = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+                return months[parseInt(parts[1]) - 1];
+            });
+            var values = filtered.map(function(m) { return m.GMV; });
+            if (window.gmvChart) { window.gmvChart.destroy(); }
+            window.gmvChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'GMV',
+                        data: values,
+                        borderColor: '#c76b6b',
+                        backgroundColor: 'rgba(199,107,107,0.08)',
+                        borderWidth: 2.5,
+                        fill: true,
+                        tension: 0.35,
+                        pointBackgroundColor: '#c76b6b',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(t) { return '$' + t.parsed.y.toLocaleString('en-US', {minimumFractionDigits:2}); }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            grid: { color: 'rgba(199,107,107,0.1)' },
+                            ticks: {
+                                color: '#8b7d7d',
+                                callback: function(v) { return '$' + (v/1000000).toFixed(1) + 'M'; }
+                            }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#8b7d7d', font: { weight: 'bold' } }
+                        }
+                    }
+                }
+            });
+        }
+
         function renderSummaryCards() {
             const container = document.getElementById('summaryCards');
             const yearSelect = document.getElementById('s1Year');
@@ -945,6 +1015,7 @@
                 `;
             });
             container.innerHTML = html;
+            renderGMVTrendChart();
         }
 
         function renderMonthTotal() {
@@ -1580,6 +1651,7 @@ function renderLowMerchants() {
 
         // Initial render on page load
         renderSummaryCards();
+        renderGMVTrendChart();
         renderMonthTotal();
         renderStoreMonthly();
         renderTopMerchants();
@@ -1619,7 +1691,7 @@ function renderLowMerchants() {
         renderStoreContact(); // 商戶資料
 
         // Year filter listeners
-        document.getElementById('s1Year').addEventListener('change', () => { renderSummaryCards(); renderMonthTotal(); });
+        document.getElementById('s1Year').addEventListener('change', () => { renderSummaryCards(); renderMonthTotal(); renderGMVTrendChart(); });
         document.getElementById('monthSelect').addEventListener('change', renderMonthTotal);
         document.getElementById('s2Year').addEventListener('change', renderStoreMonthly);
         document.getElementById('storeSelect').addEventListener('change', renderStoreMonthly);
