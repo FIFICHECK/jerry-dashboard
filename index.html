@@ -525,7 +525,7 @@
         }
 
         function getUniqueMonths(data) {
-        const months = ["2026-07"];
+            const months = [...new Set(data.map(d => d.month))].sort();
             return months;
         }
 
