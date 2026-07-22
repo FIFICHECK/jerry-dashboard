@@ -3,7 +3,7 @@ from collections import defaultdict
 from datetime import datetime, timedelta
 
 # --- Config ---
-xlsx_path = '/home/snkwok/Downloads/SKU List (17).xlsx'
+xlsx_path = '/home/snkwok/Downloads/SKU List (19).xlsx'
 repo_dir = '/home/snkwok/jerry-dashboard2'
 
 # Compute month from yesterday (MTD for data), but date badge = today (download date)
