@@ -4,3 +4,4 @@
 data/*
 !data/access_allowlist.json
 reports/*
+sku_data_full.json
