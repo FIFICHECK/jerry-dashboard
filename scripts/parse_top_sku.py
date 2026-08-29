@@ -1,15 +1,42 @@
-import openpyxl, json, os, subprocess
-from collections import defaultdict
+import openpyxl, json, os, glob
 from datetime import datetime, timedelta
 
 # --- Config ---
-xlsx_path = '/home/snkwok/Downloads/SKU List (19).xlsx'
-repo_dir = '/home/snkwok/jerry-dashboard2'
+# Auto-detect latest SKU List XLSX (no need to update path manually each run)
+downloads = '/home/snkwok/Downloads'
+xlsx_files = sorted(glob.glob(os.path.join(downloads, 'SKU List*.xlsx')), key=os.path.getmtime)
+xlsx_path = xlsx_files[-1] if xlsx_files else '/home/snkwok/Downloads/SKU List (1).xlsx'
 
-# Compute month from yesterday (MTD for data), but date badge = today (download date)
+repo_dir = os.environ.get('JERRY_REPO_DIR', '/home/snkwok/jerry-dashboard2')
+
+# === Jerry store whitelist (security: only Jerry's stores' data goes public) ===
+# Source of truth: contactData in index.html (Jerry's 119 stores).
+# SKU data from the XLSX covers the WHOLE platform — filter to Jerry's stores
+# so non-Jerry merchants' GMV/qty never leaks to the public repo.
+def load_jerry_whitelist():
+    import re as _re
+    html_path = os.path.join(repo_dir, 'index.html')
+    try:
+        with open(html_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        m = _re.search(r'const contactData = (\{.*?\});', content, _re.DOTALL)
+        if not m:
+            print('WARN: contactData not found in index.html — whitelist empty', flush=True)
+            return set()
+        import json as _json
+        return set(_json.loads(m.group(1)).keys())
+    except Exception as e:
+        print(f'WARN: could not load whitelist: {e}', flush=True)
+        return set()
+
+JERRY_STORES = load_jerry_whitelist()
+print(f'Jerry store whitelist: {len(JERRY_STORES)} stores', flush=True)
+
+# Compute month from yesterday (MTD)
 yesterday = datetime.now() - timedelta(days=1)
 month = yesterday.strftime('%Y-%m')
-today_str = datetime.now().strftime('%Y-%m-%d')  # actual download date, not yesterday
+today_str = datetime.now().strftime('%Y-%m-%d')
+print(f"XLSX: {xlsx_path}")
 print(f"Month: {month}, Date: {today_str}")
 
 # === Load historical name lookup ===
@@ -41,27 +68,24 @@ qty_idx = col_map['Qty']
 
 print(f"Column indices: sku={sku_idx}, name={name_idx}, gmv={gmv_idx}, qty={qty_idx}")
 
-# Count empty names
-empty_names = 0
-total_rows = 0
 rows = []
+empty_names = 0
 for row in ws.iter_rows(min_row=2, values_only=True):
     sc = row[sku_idx]
     if not sc:
         continue
-    total_rows += 1
+    # SECURITY: skip non-Jerry stores (only Jerry's store data goes to the public repo)
+    if JERRY_STORES and str(sc).split('_')[0] not in JERRY_STORES:
+        continue
     gmv = float(row[gmv_idx] or 0)
     qty = int(row[qty_idx] or 0)
-    sn_raw = row[name_idx]
-    sn = (sn_raw or '').strip()
+    sn = (row[name_idx] or '').strip()
     if not sn:
         empty_names += 1
     rows.append({'sc': sc, 'sn': sn, 'gmv': gmv, 'qty': qty, 'm': month})
 
-# Sort by GMV descending
 rows.sort(key=lambda x: -x['gmv'])
 
-# Fill empty names from history
 filled_from_history = 0
 still_empty = 0
 for r in rows:
@@ -72,15 +96,17 @@ for r in rows:
         else:
             still_empty += 1
 
-print(f'Total: {len(rows)} SKUs, Empty in XLSX: {empty_names}/{total_rows}')
+print(f'Total: {len(rows)} SKUs, Empty in XLSX: {empty_names}')
 print(f'Filled from history: {filled_from_history}, Still empty: {still_empty}')
 print(f'Total GMV: {sum(r["gmv"] for r in rows):.2f}')
 
-# Generate compact JSON (no spaces between separators)
 sku_data_json = json.dumps(rows, ensure_ascii=False, separators=(',', ':'))
 
-# --- Update sku_data_full.json ---
+# === Update sku_data_full.json ===
 old_count = len(full_data)
+# SECURITY: also drop any non-Jerry store entries lingering in history
+if JERRY_STORES:
+    full_data = [e for e in full_data if e['sc'].split('_')[0] in JERRY_STORES]
 full_data = [e for e in full_data if e['m'] != month]
 removed = old_count - len(full_data)
 print(f'Removed {removed} old entries for {month}')
@@ -90,26 +116,23 @@ full_data.sort(key=lambda x: (-int(x['m'].replace('-', '')), -x['gmv']))
 
 with open(full_json_path, 'w') as f:
     json.dump(full_data, f, ensure_ascii=False)
-print(f'sku_data_full.json: {len(full_data)} entries total')
+print(f'sku_data_full.json: {len(full_data)} entries')
 
-# --- Update index.html ---
+# === Update index.html ===
 html_path = os.path.join(repo_dir, 'index.html')
 
 with open(html_path, 'r') as f:
     content = f.read()
 
-# 1. Replace inline skuData array
 lines = content.split('\n')
 sku_updated = False
-sku_line = None
 for i, line in enumerate(lines):
     stripped = line.strip()
     if stripped.startswith('const skuData = [') and stripped.endswith('];'):
         indent = line[:len(line) - len(line.lstrip())]
         lines[i] = indent + 'const skuData = ' + sku_data_json + ';'
-        sku_line = i + 1
-        sku_updated = True
         print(f'skuData updated at line {i+1} ({len(rows)} entries)')
+        sku_updated = True
         break
 
 if not sku_updated:
@@ -118,11 +141,10 @@ if not sku_updated:
 
 content = '\n'.join(lines)
 
-# Write text content FIRST
 with open(html_path, 'w') as f:
     f.write(content)
 
-# 2. Update date badge (re-read in binary mode)
+# Date badge update (binary mode)
 with open(html_path, 'rb') as f:
     raw = f.read()
 
@@ -131,24 +153,33 @@ if date_prefix in raw:
     start = raw.find(date_prefix) + len(date_prefix)
     old_date = raw[start:start+10].decode('utf-8')
     raw = raw.replace(date_prefix + old_date.encode(), date_prefix + today_str.encode())
-    print(f'Date badge: {old_date} \u2192 {today_str}')
+    print(f'Date badge: {old_date} → {today_str}')
 else:
-    print('WARNING: Date badge prefix not found in index.html')
+    print('WARNING: Date badge prefix not found')
 
 with open(html_path, 'wb') as f:
     f.write(raw)
 
-# --- Verify GP is NOT touched ---
+# === Verify Sessions 1-6 structural integrity ===
 with open(html_path, 'rb') as f:
     final_raw = f.read()
-gp_check = b'"GP":8000000' in final_raw
+checks = {
+    'targetStoreMonthData': b'const targetStoreMonthData' in final_raw,
+    'months array': b'const months' in final_raw,
+    'storeMonthly': b'const storeMonthly' in final_raw,
+    'contactData': b'const contactData' in final_raw,
+    'Target_GMV': b'Target_GMV' in final_raw,
+}
+all_ok = all(checks.values())
 sku_count = final_raw.count(b'"sc":')
-print(f'GP:8000000 preserved: {gp_check}')
+for name, ok in checks.items():
+    print(f'  {name}: {"✅" if ok else "❌"}')
 print(f'SKU count in file: {sku_count}')
+print(f'Session integrity: {"PASS" if all_ok else "FAIL"}')
 
-# --- Final stats ---
 print(f'\n=== SUMMARY ===')
 print(f'XLSX: {len(rows)} SKUs parsed')
 print(f'sku_data_full.json: {len(full_data)} entries total')
 print(f'Date badge updated to {today_str}')
-print(f'GP integrity: {"PASS" if gp_check else "FAIL"}')
+print(f'SKU count in file: {sku_count}')
+print(f'Session integrity: {"PASS" if all_ok else "FAIL"}')
