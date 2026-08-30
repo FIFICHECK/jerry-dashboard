@@ -7,7 +7,7 @@ downloads = '/home/snkwok/Downloads'
 xlsx_files = sorted(glob.glob(os.path.join(downloads, 'SKU List*.xlsx')), key=os.path.getmtime)
 xlsx_path = xlsx_files[-1] if xlsx_files else '/home/snkwok/Downloads/SKU List (1).xlsx'
 
-repo_dir = os.environ.get('JERRY_REPO_DIR', '/home/snkwok/jerry-dashboard2')
+repo_dir = os.environ.get('JERRY_REPO_DIR', '/home/snkwok/jerry-dashboard')
 
 # === Jerry store whitelist (security: only Jerry's stores' data goes public) ===
 # Source of truth: contactData in index.html (Jerry's 119 stores).
