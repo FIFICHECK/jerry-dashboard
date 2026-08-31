@@ -15,6 +15,8 @@
     <h2 style="margin:0 0 10px;font-size:1.25rem;">受保護的 Dashboard</h2>
     <p style="color:#8a857e;font-size:.9rem;margin:0 0 20px;line-height:1.6;">此 Dashboard 只供獲授權人士查閱。<br>請輸入你的 email 申請訪問。</p>
     <input type="email" id="access-email" placeholder="你的 email" autocomplete="email" style="width:100%;padding:11px 14px;border:1px solid #e8ddd5;border-radius:8px;font-size:1rem;box-sizing:border-box;margin-bottom:12px;color:#2f2f2f;">
+    <input type="text" id="access-reason" placeholder="申請原因（例：需查閱數據）" maxlength="200" style="width:100%;padding:11px 14px;border:1px solid #e8ddd5;border-radius:8px;font-size:1rem;box-sizing:border-box;margin-bottom:12px;color:#2f2f2f;">
+    <input type="text" id="access-purpose" placeholder="用途（例：日常分析）" maxlength="200" style="width:100%;padding:11px 14px;border:1px solid #e8ddd5;border-radius:8px;font-size:1rem;box-sizing:border-box;margin-bottom:12px;color:#2f2f2f;">
     <button id="access-submit" style="width:100%;padding:11px 14px;border:none;border-radius:8px;background:#c76b6b;color:#fff;font-size:1rem;font-weight:600;cursor:pointer;">申請訪問</button>
     <p id="access-gate-msg" style="margin-top:14px;font-size:.9rem;min-height:1.2em;"></p>
   </div>
@@ -80,7 +82,7 @@
       fetch('https://fificheck-access-gate.fificheck.workers.dev/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ site: GATE_STORE, email: email })
+        body: JSON.stringify({ site: GATE_STORE, email: email, reason: (document.getElementById('access-reason').value || '').trim(), purpose: (document.getElementById('access-purpose').value || '').trim() })
       }).then(function() {
         try { localStorage.setItem('jerry-access-email', email); } catch(e) {}
         status.textContent = '✅ 已送出申請！管理員一撳批准，你重新整理此頁即可進入。';
