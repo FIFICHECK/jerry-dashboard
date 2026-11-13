@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>HKTVmall Beauty · 個人化喜好設定 (DEMO)</title>
+<style>
+:root{
+  --pink:#F47A95; --pink-light:#F8C3CD; --pink-bg:#FFF5F7;
+  --ink:#1F2328; --sub:#6B7280; --line:#EFE3E7; --ok:#12A150; --warn:#E4483F;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang HK","Noto Sans HK","Microsoft JhengHei",sans-serif;
+  background:#FFF9FA;color:var(--ink);font-size:15px;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;background:#fff;min-height:100vh;padding-bottom:96px}
+header{background:linear-gradient(135deg,var(--pink) 0%,#E4483F 130%);color:#fff;padding:22px 20px 26px}
+.brand{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;letter-spacing:.4px;opacity:.95}
+.brand .dot{width:7px;height:7px;border-radius:50%;background:#fff}
+h1{font-size:21px;margin:10px 0 6px;font-weight:800}
+header p{margin:0;font-size:13px;opacity:.92;line-height:1.55}
+.progress{margin-top:16px;height:5px;border-radius:99px;background:rgba(255,255,255,.28);overflow:hidden}
+.progress i{display:block;height:100%;width:0;background:#fff;border-radius:99px;transition:width .25s}
+section{padding:18px 20px}
+.sec-title{font-size:13px;font-weight:800;color:var(--sub);letter-spacing:.5px;margin:0 0 10px;text-transform:uppercase}
+.field{margin-bottom:14px}
+label.lbl{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+input[type=text],input[type=date],input[type=number],select{
+  width:100%;padding:12px 14px;border:1.5px solid var(--line);border-radius:12px;font-size:15px;background:#fff;color:var(--ink);
+  font-family:inherit;outline:none}
+input:focus,select:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(244,122,149,.14)}
+.hint{font-size:12px;color:var(--sub);margin-top:5px}
+.consent{background:var(--pink-bg);border:1px solid var(--pink-light);border-radius:14px;padding:14px}
+.consent .row{display:flex;gap:10px;align-items:flex-start}
+.consent input{width:20px;height:20px;accent-color:var(--pink);margin-top:2px;flex:0 0 auto}
+.consent b{display:block;font-size:13.5px;margin-bottom:3px}
+.consent small{color:var(--sub);font-size:12px;line-height:1.5;display:block}
+.cref{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#B4326A;background:#fff;border:1px dashed var(--pink-light);
+  border-radius:8px;padding:4px 8px;display:inline-block;margin-top:8px}
+.card{border:1.5px solid var(--line);border-radius:16px;padding:14px 14px 6px;margin-bottom:11px;transition:.18s;background:#fff}
+.card.on{border-color:var(--pink);background:#FFFCFD;box-shadow:0 4px 16px rgba(244,122,149,.10)}
+.card-head{display:flex;align-items:center;gap:10px;cursor:pointer}
+.ico{width:34px;height:34px;border-radius:10px;background:var(--pink-bg);display:grid;place-items:center;font-size:17px;flex:0 0 auto}
+.card-head .t{flex:1;min-width:0}
+.card-head .t b{display:block;font-size:14.5px}
+.card-head .t span{font-size:11.5px;color:var(--sub)}
+.sw{width:46px;height:27px;border-radius:99px;background:#E5E7EB;position:relative;flex:0 0 auto;transition:.2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.2s;
+  box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.card.on .sw{background:var(--pink)}
+.card.on .sw::after{transform:translateX(19px)}
+.card-body{display:none;padding-top:12px}
+.card.on .card-body{display:block}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.pill{padding:8px 14px;border-radius:99px;border:1.5px solid var(--line);font-size:13.5px;cursor:pointer;background:#fff;user-select:none}
+.pill.sel{border-color:var(--pink);background:var(--pink);color:#fff;font-weight:700}
+.sub-block{border-top:1px dashed var(--line);padding-top:12px;margin-top:8px}
+.sub-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sub-head b{font-size:13px}
+.rm{background:none;border:none;color:var(--warn);font-size:12.5px;cursor:pointer;padding:4px 0}
+.addmore{background:none;border:1.5px dashed var(--pink-light);color:var(--pink);border-radius:10px;
+  padding:9px;width:100%;font-size:13px;font-weight:700;cursor:pointer;margin-bottom:10px;font-family:inherit}
+.bar{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);padding:12px 20px calc(12px + env(safe-area-inset-bottom))}
+.bar .inner{max-width:560px;margin:0 auto;display:flex;gap:12px;align-items:center}
+.bar .cnt{font-size:12.5px;color:var(--sub);flex:1}
+.bar .cnt b{color:var(--pink);font-size:16px}
+button.primary{background:var(--pink);color:#fff;border:none;border-radius:14px;padding:14px 26px;font-size:15px;
+  font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 6px 18px rgba(244,122,149,.34)}
+button.primary:disabled{background:#EDD5DB;box-shadow:none;cursor:not-allowed}
+.err{background:#FFF2F1;border:1px solid #F7C9C5;color:#8C2B24;border-radius:12px;padding:12px;font-size:13px;
+  margin:0 20px 14px;display:none}
+.err ul{margin:6px 0 0;padding-left:18px}
+.err li{margin-bottom:3px}
+.sheet{position:fixed;inset:0;background:rgba(20,20,24,.45);display:none;align-items:flex-end;z-index:50}
+.sheet.show{display:flex}
+.sheet .box{background:#fff;width:100%;max-width:560px;margin:0 auto;border-radius:20px 20px 0 0;padding:22px 20px 28px;
+  max-height:88vh;overflow:auto}
+.sheet h2{margin:0 0 4px;font-size:19px}
+.sheet .ok-ico{width:52px;height:52px;border-radius:50%;background:#E9F9EF;color:var(--ok);display:grid;place-items:center;
+  font-size:26px;margin-bottom:12px}
+.tag{display:inline-flex;align-items:center;gap:6px;background:var(--pink-bg);border:1px solid var(--pink-light);
+  color:#B4326A;border-radius:99px;padding:5px 11px;font-size:12.5px;margin:0 6px 6px 0}
+.tag.quiet{background:#F3F4F6;border-color:#E5E7EB;color:#4B5563}
+pre{background:#0F172A;color:#C7F9D8;padding:14px;border-radius:12px;font-size:11.5px;overflow:auto;max-height:260px;
+  font-family:ui-monospace,Menlo,monospace;line-height:1.5}
+details{margin-top:14px}
+summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--sub)}
+</style>
+</head>
+<body>
+<div style="background:#FFF4D6;border-bottom:1px solid #F2D98A;color:#7A5B00;font-size:12.5px;
+  padding:8px 20px;text-align:center;line-height:1.5">
+  <b>DEMO</b> · 資料只留在你部機（瀏覽器 session），唔會寫入 BigQuery · 驗證規則同正式版一致
+</div>
+<div class="wrap">
+<header>
+  <div class="brand"><span class="dot"></span> HKTVmall Beauty</div>
+  <h1>個人化喜好設定</h1>
+  <p>話我哋知你家庭狀況，我哋就可以避開唔啱你嘅成分，<br>推薦真正啱你用嘅護膚同健康產品。</p>
+  <div class="progress"><i id="pg"></i></div>
+</header>
+
+<section>
+  <p class="sec-title">第一步 · 你的會員號</p>
+  <div class="field">
+    <label class="lbl" for="customer">會員號碼（customer key）</label>
+    <input id="customer" type="text" inputmode="numeric" placeholder="例如 1234567890123" autocomplete="off">
+    <div class="hint">我哋只會用呢個 key 儲存，唔會收集姓名、電話或地址。</div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="consent">
+    <div class="row">
+      <input type="checkbox" id="consent">
+      <div>
+        <b>我同意 HKTVmall 用以上資料推薦合適貨品</b>
+        <small>用途：按你家庭狀況（例如有小朋友、懷孕、有寵物）篩選合適成分同產品，並用於個人化推薦。資料只存於 HKTVmall 資料平台，不會外傳。你可以隨時要求更正或刪除。</small>
+        <div class="cref" id="cref">同意紀錄：<span>FORM-2026-</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <p class="sec-title">第二步 · 邊項啱你？（可選多項）</p>
+  <div id="cards"></div>
+</section>
+
+<div class="err" id="errbox"></div>
+</div>
+
+<div class="bar"><div class="inner">
+  <div class="cnt">已選 <b id="cnt">0</b> 項</div>
+  <button class="primary" id="submit">儲存喜好</button>
+</div></div>
+
+<div class="sheet" id="sheet"><div class="box" id="sheetbox"></div></div>
+
+<script>
+
+// ===================== DEMO 模式：本地驗證 + 本地儲存 =====================
+const VOCAB = {"_note": "Local mirror of merce-recom-engine.prefs_share.tag_vocab. Source of truth = BigQuery; this file is only for offline validation in the POC. Keep in sync via `python3 declare.py --sync-vocab`.", "version": "2026-11-11", "kinds": {"child": {"label_zh": "有小朋友", "values": ["男", "女", "未知"], "date_meaning": "出世日", "multi": true, "ref_date_required": true, "beauty_pitch": "小朋友護膚／防曬要溫和配方"}, "pet": {"label_zh": "有（物種）", "values": ["貓", "狗", "龜", "魚", "鳥", "兔", "倉鼠", "其他"], "date_meaning": "出世日", "multi": true, "ref_date_required": true, "beauty_pitch": "寵物家庭留意致敏原同無香配方"}, "pregnancy": {"label_zh": "懷孕／準備迎接BB", "values": null, "date_meaning": "預產期", "multi": false, "ref_date_required": true, "beauty_pitch": "避開 Retinol／高濃度酸類，揀孕婦適用"}, "ttc": {"label_zh": "備孕", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "備孕期成分把關"}, "elder": {"label_zh": "有長者／照顧需要的成員", "values": null, "date_meaning": "出世日", "multi": true, "ref_date_required": true, "beauty_pitch": "長者皮膚薄，揀滋潤低刺激"}, "chronic_monitor": {"label_zh": "家中有人需要三高監測", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "健康監測相關用品"}, "medical_nutrition": {"label_zh": "家中有人需要醫療營養", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "醫療營養補充"}, "hearing": {"label_zh": "有助聽器使用者", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "助聽器護理用品"}, "moving": {"label_zh": "搬屋／裝修", "values": null, "date_meaning": "搬屋日", "multi": false, "ref_date_required": true, "beauty_pitch": "新居收納同家居清潔"}, "owns": {"label_zh": "有（電器）", "values": ["洗碗碟機"], "date_meaning": null, "multi": true, "ref_date_required": false, "beauty_pitch": "家電耗材配對"}}, "sources": ["staff_call", "store", "app_form", "survey", "cs_chat"], "statuses": ["active", "removed", "none"], "precisions": ["day", "month", "year"], "sensitive_kinds": ["pregnancy", "chronic_monitor", "medical_nutrition", "hearing"]};
+const DEMO_ROWS = [];   // 本次 session 寫入嘅行（append-only）
+const MEM = {};         // customer -> rows（sessionStorage 唔可用時嘅 fallback）
+
+function storeRows(customer, rows){
+  DEMO_ROWS.push(...rows);
+  try{
+    const k="demo_prefs_"+customer;
+    const prev=JSON.parse(sessionStorage.getItem(k)||"[]");
+    sessionStorage.setItem(k, JSON.stringify(prev.concat(rows)));
+  }catch(e){ MEM[customer]=(MEM[customer]||[]).concat(rows); }
+}
+
+function rowsFor(customer){
+  try{
+    const s=sessionStorage.getItem("demo_prefs_"+customer);
+    if(s) return JSON.parse(s);
+  }catch(e){}
+  return (MEM[customer]||[]).concat(DEMO_ROWS.filter(r=>r.customer===customer));
+}
+
+function ageToRefDate(age, unit){
+  const d=new Date(); const n=Number(age);
+  if(isNaN(n) || n<0) throw new Error("年齡唔可以負數");
+  const p2=x=>String(x).padStart(2,"0");
+  if(unit==="year" || unit==="歲"){
+    const total=n*12;
+    if(Math.abs(total-Math.round(total))<1e-9 && Math.round(total)%12===0){
+      const y=new Date(d.getFullYear()-Math.round(total)/12, d.getMonth(), 1);
+      return [y.getFullYear()+"-"+p2(y.getMonth()+1)+"-01", "year"];
+    }
+    const m=new Date(d.getFullYear(), d.getMonth()-Math.round(total), 1);
+    return [m.getFullYear()+"-"+p2(m.getMonth()+1)+"-01", "month"];
+  }
+  const m=new Date(d.getFullYear(), d.getMonth()-Math.round(n), 1);
+  return [m.getFullYear()+"-"+p2(m.getMonth()+1)+"-01", "month"];
+}
+
+const UUID_RE=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function uuid(){
+  if(crypto.randomUUID) return crypto.randomUUID();
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{
+    const r=Math.random()*16|0, v=c==="x"?r:(r&0x3|0x8); return v.toString(16);});
+}
+function pad(n){return String(n).padStart(2,"0");}
+function nowStamp(){const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+" "+pad(d.getHours())+":"+pad(d.getMinutes());}
+
+function validateRow(r){
+  const e=[];
+  ["declaration_id","customer","kind","status","declared_at","source","recorded_by","consent_ref"]
+    .forEach(f=>{ if(!String(r[f]||"").trim()) e.push("缺少必填欄位 "+f); });
+  if(r.declaration_id && !UUID_RE.test(r.declaration_id)) e.push("declaration_id 唔係合法 UUID");
+  const spec=(VOCAB.kinds||{})[r.kind];
+  if(r.kind && !spec) return e.concat(["kind '"+r.kind+"' 唔喺 tag_vocab（要新增類別請先搵數據組）"]);
+  if(r.status && VOCAB.statuses.indexOf(r.status)<0) e.push("status 只可以係 "+VOCAB.statuses.join("/"));
+  if(r.source && VOCAB.sources.indexOf(r.source)<0) e.push("source 只可以係 "+VOCAB.sources.join("/"));
+  if(!spec) return e;
+
+  const val=(r.value||"").trim()||null, sub=(r.subject_id||"").trim()||null;
+  const rd=(r.ref_date||"").trim()||null, prec=(r.ref_date_precision||"").trim()||null;
+
+  if(r.status==="none"){
+    if(val) e.push("status=none 唔應該有 value（"+r.kind+"）");
+    if(sub) e.push("status=none 唔應該有 subject_id（"+r.kind+"）");
+    if(rd) e.push("status=none 唔應該有 ref_date（"+r.kind+"）");
+    if(!String(r.note||"").trim()) e.push("status=none 請喺 note 寫低客人點講");
+    return e;
+  }
+  const allowed=spec.values;
+  if(allowed && allowed.length){
+    if(!val) e.push("kind '"+r.kind+"' 要填 value，可用值："+allowed.join("、"));
+    else if(allowed.indexOf(val)<0) e.push("value '"+val+"' 唔喺 tag_vocab（"+r.kind+" 可用："+allowed.join("、")+"）");
+  } else if(val){
+    e.push("kind '"+r.kind+"' 冇可用值，唔應該有 value: "+val);
+  }
+  if(spec.multi){
+    if(!sub) e.push("kind '"+r.kind+"' 一戶可以有幾個，一定要填 subject_id（例如 "+r.kind+"_1）");
+    else{
+      const m=/^([a-z_]+)_([1-9][0-9]{0,2})$/.exec(sub);
+      if(!m) e.push("subject_id 格式應為 "+r.kind+"_1 / "+r.kind+"_2: "+sub);
+      else if(m[1]!==r.kind) e.push("subject_id 前綴要對應 kind："+sub+" vs "+r.kind);
+    }
+  } else if(sub){
+    e.push("kind '"+r.kind+"' 一戶只有一個，唔應該有 subject_id: "+sub);
+  }
+  if(spec.ref_date_required && !rd) e.push("kind '"+r.kind+"' 要填 ref_date（"+spec.date_meaning+"），唔好儲年齡");
+  if(rd){
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(rd)) e.push("ref_date 要係 YYYY-MM-DD: "+rd);
+    if(!prec) e.push("有 ref_date 就要填 ref_date_precision (day/month/year)");
+    else if(VOCAB.precisions.indexOf(prec)<0) e.push("ref_date_precision 只可以係 "+VOCAB.precisions.join("/"));
+  } else if(prec){ e.push("冇 ref_date 但有 ref_date_precision"); }
+  if(String(r.consent_ref||"").trim().length<4) e.push("consent_ref 太短，要指到真正嘅同意紀錄");
+  return e;
+}
+
+function effectiveOf(customer){
+  const rows=rowsFor(customer);
+  const latest={};
+  rows.forEach(r=>{ latest[r.kind+"|"+(r.subject_id||"")]=r; });
+  const today=new Date();
+  const LAB={child:"小朋友",pet:"寵物",elder:"長者",owns:"電器"};
+  const out=[];
+  Object.values(latest).forEach(r=>{
+    if(r.status!=="active") return;
+    const item={kind:r.kind,label:LAB[r.kind]||r.kind,value:r.value||null,subject_id:r.subject_id||null,
+      source:"declared",say_to_customer:VOCAB.sensitive_kinds.indexOf(r.kind)<0,
+      ref_date:r.ref_date||null,ref_date_precision:r.ref_date_precision||null,age_months:null};
+    if(r.ref_date){
+      const d=new Date(r.ref_date+"T00:00:00");
+      const mos=(today.getFullYear()-d.getFullYear())*12+(today.getMonth()-d.getMonth())-(today.getDate()<d.getDate()?1:0);
+      if(mos>=0) item.age_months=mos; else item.due_in_months=-mos;
+    }
+    out.push(item);
+  });
+  return out;
+}
+
+function localDeclare(body){
+  const errors=[], rows=[];
+  if(!body.items || !body.items.length) errors.push("冇任何資料項");
+  body.items.forEach((it,i)=>{
+    const r={declaration_id:uuid(),customer:body.customer,kind:it.kind,subject_id:it.subject_id||null,
+      value:it.value||null,status:it.status||"active",declared_at:it.declared_at||nowStamp(),
+      source:body.source||"app_form",recorded_by:body.recorded_by||"beauty-prefs-web",
+      consent_ref:body.consent_ref||"",note:it.note||null};
+    if(it.age!=null && it.age!=="" && !it.ref_date){
+      try{ const pair=ageToRefDate(it.age,it.age_unit||"year");
+           r.ref_date=pair[0]; r.ref_date_precision=pair[1]; }
+      catch(err){ errors.push("第 "+(i+1)+" 項年齡轉換失敗: "+err.message); }
+    } else if(it.ref_date){
+      r.ref_date=it.ref_date; r.ref_date_precision=it.ref_date_precision||"day";
+    }
+    Object.keys(r).forEach(k=>{ if(r[k]===null||r[k]==="") delete r[k]; });
+    const ve=validateRow(r);
+    if(ve.length) errors.push(...ve.map(x=>"第 "+(i+1)+" 項 ("+r.kind+"): "+x));
+    rows.push(r);
+  });
+  if(errors.length) return {ok:false, errors};
+  storeRows(body.customer, rows);
+  const insert_all={kind:"bigquery#tableDataInsertAllRequest",
+    rows:rows.map(r=>({insertId:r.declaration_id, json:r}))};
+  return {ok:true, written:rows.length, mode:"demo（瀏覽器內，唔會寫 BigQuery）",
+          rows, insert_all, effective:effectiveOf(body.customer)};
+}
+// =================== end DEMO mode ===================
+
+const KINDS = [
+  {kind:"child", ico:"👶", label:"有小朋友", sub:"護膚防曬要溫和配方", values:["男","女","未知"], date:"出世日", multi:true, type:"age"},
+  {kind:"pet", ico:"🐱", label:"有養寵物", sub:"無香、低致敏配方", values:["貓","狗","龜","魚","鳥","兔","倉鼠","其他"], date:"出世日", multi:true, type:"age"},
+  {kind:"pregnancy", ico:"🤰", label:"懷孕／準備迎接BB", sub:"避開 Retinol 同高濃度酸類", values:null, date:"預產期", multi:false, type:"date"},
+  {kind:"ttc", ico:"🌱", label:"備孕中", sub:"成分先幫你把關", values:null, date:null, multi:false, type:"none"},
+  {kind:"elder", ico:"🧓", label:"有長者／需要照顧的家人", sub:"滋潤低刺激", values:null, date:"出世日", multi:true, type:"age"},
+  {kind:"chronic_monitor", ico:"🩺", label:"家人需要三高監測", sub:"居家健康監測", values:null, date:null, multi:false, type:"none"},
+  {kind:"medical_nutrition", ico:"🥛", label:"家人需要醫療營養", sub:"營養補充配對", values:null, date:null, multi:false, type:"none"},
+  {kind:"hearing", ico:"👂", label:"有助聽器使用者", sub:"助聽器護理用品", values:null, date:null, multi:false, type:"none"},
+  {kind:"moving", ico:"📦", label:"準備搬屋／裝修", sub:"新居收納同清潔", values:null, date:"搬屋日", multi:false, type:"date"},
+  {kind:"owns", ico:"🍽️", label:"有洗碗碟機", sub:"家電耗材配對", values:["洗碗碟機"], date:null, multi:true, type:"none"}
+];
+
+// 同意紀錄號（POC：由前端產生；正式應由同意系統簽發）
+const CREf = "FORM-2026-" + String(Math.floor(Math.random()*9000)+1000);
+document.querySelector("#cref span").textContent = CREf;
+
+const today = new Date().toISOString().slice(0,10);
+const cardsEl = document.getElementById("cards");
+const state = {};   // kind -> {on:bool, subs:[{value,age,ageUnit,ref_date,prec,note}]}
+const nSubs = k => KINDS.find(x=>x.kind===k).multi ? 2 : 1;
+
+function esc(s){return (s??"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+KINDS.forEach(k=>{
+  const el = document.createElement("div");
+  el.className="card"; el.dataset.kind=k.kind;
+  el.innerHTML = `
+    <div class="card-head" data-toggle>
+      <div class="ico">${k.ico}</div>
+      <div class="t"><b>${k.label}</b><span>${k.sub}</span></div>
+      <div class="sw"></div>
+    </div>
+    <div class="card-body" data-body></div>`;
+  cardsEl.appendChild(el);
+  el.querySelector("[data-toggle]").addEventListener("click", ()=>toggle(k.kind));
+});
+
+function toggle(kind){
+  const card = document.querySelector(`.card[data-kind="${kind}"]`);
+  const spec = KINDS.find(x=>x.kind===kind);
+  const on = !card.classList.contains("on");
+  card.classList.toggle("on", on);
+  if(on && !state[kind]){
+    state[kind] = {on:true, subs:Array.from({length:spec.multi?1:1},()=>({value:"",age:"",ageUnit:"year",ref_date:"",prec:"day",note:""}))};
+    renderBody(kind);
+  }
+  state[kind] = state[kind] || {};
+  state[kind].on = on;
+  if(!on) expandSubjects(kind, 0);
+  updateCount();
+}
+
+function expandSubjects(kind, n){
+  const card = document.querySelector(`.card[data-kind="${kind}"]`);
+  card.querySelectorAll(".sub-block").forEach((b,i)=>{ if(i>=n) b.remove(); });
+  if(state[kind]) state[kind].subs = state[kind].subs.slice(0,n);
+}
+
+function renderBody(kind){
+  const spec = KINDS.find(x=>x.kind===kind);
+  const card = document.querySelector(`.card[data-kind="${kind}"]`);
+  const body = card.querySelector("[data-body]");
+  const st = state[kind];
+  body.innerHTML = st.subs.map((s,i)=>subHTML(spec, s, i)).join("") +
+    (spec.multi && st.subs.length>1 ? "" : (spec.multi ? `<button class="addmore" data-add>+ 加多一個${spec.label.replace("有","")}</button>`:""));
+  bind(kind);
+}
+
+function subHTML(spec, s, i){
+  const head = spec.multi ? `<div class="sub-head"><b>${({child:"小朋友",pet:"寵物",elder:"長者",owns:"電器"}[spec.kind]||spec.label)} #${i+1}</b>${i>0?'<button class="rm" data-rm>移除</button>':''}</div>` : "";
+  const pills = spec.values ? `<div class="pills" data-pills>${spec.values.map(v=>
+      `<div class="pill${s.value===v?" sel":""}" data-v="${esc(v)}">${esc(v)}</div>`).join("")}</div>` : "";
+  let dateUI = "";
+  if(spec.type==="age"){
+    dateUI = `<div class="field"><label class="lbl">幾大？（我哋會自動計出${spec.date}）</label>
+      <div style="display:flex;gap:8px">
+        <input type="number" min="0" max="120" step="1" data-age placeholder="例如 3" value="${esc(s.age)}" style="flex:1">
+        <select data-unit style="width:110px">
+          <option value="year"${s.ageUnit==="year"?" selected":""}>歲</option>
+          <option value="month"${s.ageUnit==="month"?" selected":""}>個月</option>
+        </select>
+      </div>
+      <div class="hint" data-ageshow>${s.age?`→ 會儲為 ${esc(guessDate(s.age,s.ageUnit))}`:"唔記得幾歲？直接填大約都可以（只影響推薦精確度）"}</div>
+    </div>`;
+  } else if(spec.type==="date"){
+    dateUI = `<div class="field"><label class="lbl">${spec.date}</label>
+      <input type="date" data-date value="${esc(s.ref_date)}" min="2020-01-01" max="2030-12-31">
+      <div class="hint" data-dateshow>${s.ref_date?"已選："+esc(s.ref_date):""}</div>
+      <div class="hint">${spec.kind==="pregnancy"?"預產期可以填大約日期":"唔記得準確日子？填大約月份就可以"}</div></div>`;
+  }
+  return `<div class="sub-block" data-sub="${i}">${head}${pills}${dateUI}</div>`;
+}
+
+function localISO(dt){
+  const p2 = n => String(n).padStart(2,"0");
+  return dt.getFullYear()+"-"+p2(dt.getMonth()+1)+"-"+p2(dt.getDate());
+}
+
+function guessDate(age, unit){
+  const d = new Date();
+  const n = parseInt(age||0,10);
+  if(!n && n!==0) return "";
+  if(unit==="year"){
+    const y = new Date(d.getFullYear()-n, d.getMonth(), 1);   // 保留月份、日=1（同 python 一致）
+    return localISO(y)+"（準確度：年）";
+  }
+  const m = new Date(d.getFullYear(), d.getMonth()-n, 1);
+  return localISO(m)+"（準確度：月）";
+}
+
+function bind(kind){
+  const card = document.querySelector(`.card[data-kind="${kind}"]`);
+  const st = state[kind];
+  card.querySelectorAll("[data-sub]").forEach(block=>{
+    const i = +block.dataset.sub;
+    block.querySelectorAll("[data-v]").forEach(p=>p.addEventListener("click",()=>{
+      block.querySelectorAll("[data-v]").forEach(x=>x.classList.remove("sel"));
+      p.classList.add("sel"); st.subs[i].value = p.dataset.v;
+    }));
+    const age = block.querySelector("[data-age]");
+    if(age) age.addEventListener("input",()=>{
+      st.subs[i].age = age.value;
+      const show = block.querySelector("[data-ageshow]");
+      if(show) show.textContent = age.value ? `→ 會儲為 ${guessDate(age.value, st.subs[i].ageUnit)}` : "唔記得幾歲？直接填大約都可以";
+    });
+    const unit = block.querySelector("[data-unit]");
+    if(unit) unit.addEventListener("change",()=>{ st.subs[i].ageUnit = unit.value;
+      const show = block.querySelector("[data-ageshow]");
+      if(show && st.subs[i].age) show.textContent = `→ 會儲為 ${guessDate(st.subs[i].age, unit.value)}`; });
+    const dt = block.querySelector("[data-date]");
+    if(dt) dt.addEventListener("change",()=>{ st.subs[i].ref_date = dt.value; const ds=block.querySelector("[data-dateshow]"); if(ds) ds.textContent = dt.value?("已選："+dt.value):""; });
+  });
+  const add = card.querySelector("[data-add]");
+  if(add) add.addEventListener("click",()=>{
+    st.subs.push({value:"",age:"",ageUnit:"year",ref_date:"",prec:"day",note:""});
+    renderBody(kind); updateCount();
+  });
+  card.querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click",e=>{
+    const i = +e.target.closest("[data-sub]").dataset.sub;
+    st.subs.splice(i,1); renderBody(kind); updateCount();
+  }));
+}
+
+function updateCount(){
+  let n=0;
+  Object.entries(state).forEach(([k,v])=>{ if(v.on) n += Math.max(1, v.subs.length); });
+  document.getElementById("cnt").textContent = n;
+  const filled = Object.entries(state).filter(([k,v])=>v.on).length;
+  document.getElementById("pg").style.width = Math.min(100, filled*10) + "%";
+}
+
+function buildItems(){
+  const items=[];
+  Object.entries(state).forEach(([kind,v])=>{
+    if(!v.on) return;
+    const spec = KINDS.find(x=>x.kind===kind);
+    if(spec.multi){
+      v.subs.forEach((s,i)=>items.push({kind, subject_id:`${kind}_${i+1}`, value:s.value||null,
+        age:s.age||null, age_unit:s.ageUnit, ref_date:s.ref_date||null,
+        ref_date_precision: s.ref_date? "day":null}));
+    } else {
+      const s=v.subs[0]||{};
+      items.push({kind, value:s.value||null, age:s.age||null, age_unit:s.ageUnit,
+        ref_date:s.ref_date||null, ref_date_precision: s.ref_date? "day":null});
+    }
+  });
+  return items;
+}
+
+document.getElementById("submit").addEventListener("click", async()=>{
+  const errbox=document.getElementById("errbox"); errbox.style.display="none";
+  const customer=document.getElementById("customer").value.trim();
+  const consent=document.getElementById("consent").checked;
+  const items=buildItems();
+  const errs=[];
+  if(!customer) errs.push("請先填會員號碼");
+  if(!consent) errs.push("請先勾同意推薦用途");
+  if(!items.length) errs.push("請最少選一項");
+  if(errs.length) return showErrors(errs);
+
+  const btn=document.getElementById("submit"); btn.disabled=true; btn.textContent="儲存中…";
+  await new Promise(r=>setTimeout(r,300));
+  const js = localDeclare({customer,consent_ref:CREf,source:"app_form",recorded_by:"beauty-prefs-web",items});
+  btn.disabled=false; btn.textContent="儲存喜好";
+  if(!js.ok){ showErrors(js.errors||["儲存失敗"]); return; }
+  showSuccess(js, customer);
+});
+
+function showErrors(list){
+  const b=document.getElementById("errbox");
+  b.innerHTML="<b>有幾項要改：</b><ul>"+list.map(x=>`<li>${esc(x)}</li>`).join("")+"</ul>";
+  b.style.display="block"; b.scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function fmtAge(m){
+  if(m==null) return "";
+  if(m>=24 && m%12===0) return (m/12)+"歲";
+  if(m>=12) return Math.floor(m/12)+"歲"+(m%12?m%12+"個月":"");
+  return m+"個月";
+}
+
+function showSuccess(js, customer){
+  const prof = js.effective||[];
+  const tags = prof.map(p=>`<span class="tag${p.say_to_customer?"":" quiet"}" title="${p.say_to_customer?"可以喺對話／推廣直接講":"只可以用嚟推薦，唔可以講出口"}">
+      ${esc(p.label)}${p.value?"："+esc(p.value):""}${p.age_months!=null?" · "+fmtAge(p.age_months):""}${p.due_in_months!=null?" · 預產期 "+esc(p.ref_date):""}</span>`).join("");
+  document.getElementById("sheetbox").innerHTML = `
+    <div class="ok-ico">✓</div>
+    <h2>已儲存，多謝你！</h2>
+    <p style="color:#6B7280;font-size:13.5px;margin:0 0 14px">
+      寫入 <code>${esc(js.mode)}</code> · ${js.written} 行 · 每人每項一行，只加不删。<br>
+      ${js.detail?`<span style="color:#E4483F">BQ 未通：${esc(js.detail.slice(0,120))}（已寫本地 mirror 驗證）</span>`:""}
+    </p>
+    <p class="sec-title" style="margin-bottom:8px">AI 之後會見到嘅標籤（profiles_effective）</p>
+    <div>${tags||'<span style="color:#6B7280">（無）</span>'}</div>
+    <p style="color:#6B7280;font-size:12px;margin:12px 0 0">灰色 = <code>say_to_customer=false</code>，只可用於推薦，不可在對話／推廣文字說出口。</p>
+    <details><summary>睇寫入嘅資料（每件事一行）</summary>
+      <pre>${esc(JSON.stringify(js.rows,null,2))}</pre></details>
+    <details><summary>睇 BigQuery insertAll payload</summary>
+      <pre>${esc(JSON.stringify(js.insert_all,null,2).slice(0,2600))}</pre></details>
+    <button class="primary" style="width:100%;margin-top:18px" onclick="document.getElementById('sheet').classList.remove('show');location.reload()">完成</button>`;
+  document.getElementById("sheet").classList.add("show");
+}
+</script>
+</body>
+</html>
