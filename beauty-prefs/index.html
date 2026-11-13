@@ -240,7 +240,9 @@ function effectiveOf(customer){
   const latest={};
   rows.forEach(r=>{ latest[r.kind+"|"+(r.subject_id||"")]=r; });
   const today=new Date();
-  const LAB={child:"小朋友",pet:"寵物",elder:"長者",owns:"電器"};
+  const LAB={child:"小朋友",pet:"寵物",elder:"長者",owns:"電器",pregnancy:"懷孕／準備迎接BB",
+             ttc:"備孕",chronic_monitor:"三高監測",medical_nutrition:"醫療營養",
+             hearing:"助聽器",moving:"搬屋／裝修"};
   const out=[];
   Object.values(latest).forEach(r=>{
     if(r.status!=="active") return;
