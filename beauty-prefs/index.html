@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>HKTVmall Beauty · 個人化喜好設定 (DEMO)</title>
+<title>HKTVmall Beauty · 個人化美妝喜好設定 (DEMO)</title>
 <style>
 :root{
   --pink:#F47A95; --pink-light:#F8C3CD; --pink-bg:#FFF5F7;
   --ink:#1F2328; --sub:#6B7280; --line:#EFE3E7; --ok:#12A150; --warn:#E4483F;
+  --new:#B45309; --new-bg:#FEF3C7; --new-line:#FCD34D;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"PingFang HK","Noto Sans HK","Microsoft JhengHei",sans-serif;
@@ -36,13 +37,19 @@ input:focus,select:focus{border-color:var(--pink);box-shadow:0 0 0 3px rgba(244,
 .consent small{color:var(--sub);font-size:12px;line-height:1.5;display:block}
 .cref{font-family:ui-monospace,Menlo,monospace;font-size:12px;color:#B4326A;background:#fff;border:1px dashed var(--pink-light);
   border-radius:8px;padding:4px 8px;display:inline-block;margin-top:8px}
-.card{border:1.5px solid var(--line);border-radius:16px;padding:14px 14px 6px;margin-bottom:11px;transition:.18s;background:#fff}
+.group{margin:20px 0 8px}
+.group:first-child{margin-top:0}
+.group h3{margin:0;font-size:14.5px;font-weight:800;color:#B4326A}
+.group .gsub{font-size:11.5px;color:var(--sub);margin-top:2px}
+.card{border:1.5px solid var(--line);border-radius:16px;padding:14px 14px 6px;margin-top:10px;transition:.18s;background:#fff}
 .card.on{border-color:var(--pink);background:#FFFCFD;box-shadow:0 4px 16px rgba(244,122,149,.10)}
 .card-head{display:flex;align-items:center;gap:10px;cursor:pointer}
 .ico{width:34px;height:34px;border-radius:10px;background:var(--pink-bg);display:grid;place-items:center;font-size:17px;flex:0 0 auto}
 .card-head .t{flex:1;min-width:0}
 .card-head .t b{display:block;font-size:14.5px}
 .card-head .t span{font-size:11.5px;color:var(--sub)}
+.badge-new{display:inline-block;background:var(--new-bg);border:1px solid var(--new-line);color:var(--new);
+  font-size:10px;font-weight:800;border-radius:99px;padding:1px 7px;margin-left:6px;vertical-align:2px}
 .sw{width:46px;height:27px;border-radius:99px;background:#E5E7EB;position:relative;flex:0 0 auto;transition:.2s}
 .sw::after{content:"";position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;transition:.2s;
   box-shadow:0 1px 3px rgba(0,0,0,.18)}
@@ -81,22 +88,23 @@ button.primary:disabled{background:#EDD5DB;box-shadow:none;cursor:not-allowed}
 .tag{display:inline-flex;align-items:center;gap:6px;background:var(--pink-bg);border:1px solid var(--pink-light);
   color:#B4326A;border-radius:99px;padding:5px 11px;font-size:12.5px;margin:0 6px 6px 0}
 .tag.quiet{background:#F3F4F6;border-color:#E5E7EB;color:#4B5563}
+.tag.pending{background:var(--new-bg);border-color:var(--new-line);color:var(--new)}
 pre{background:#0F172A;color:#C7F9D8;padding:14px;border-radius:12px;font-size:11.5px;overflow:auto;max-height:260px;
   font-family:ui-monospace,Menlo,monospace;line-height:1.5}
 details{margin-top:14px}
 summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--sub)}
 </style>
 </head>
-<body>
+<body data-build="20261113-213602">
 <div style="background:#FFF4D6;border-bottom:1px solid #F2D98A;color:#7A5B00;font-size:12.5px;
   padding:8px 20px;text-align:center;line-height:1.5">
-  <b>DEMO</b> · 資料只留在你部機（瀏覽器 session），唔會寫入 BigQuery · 驗證規則同正式版一致
+  <b>DEMO</b> · 資料只留在你部機（瀏覽器 session），唔會寫入 BigQuery · 驗證規則同正式版一致 · 標「待 vocab 批」嘅類別未經數據組批准
 </div>
 <div class="wrap">
 <header>
   <div class="brand"><span class="dot"></span> HKTVmall Beauty</div>
-  <h1>個人化喜好設定</h1>
-  <p>話我哋知你家庭狀況，我哋就可以避開唔啱你嘅成分，<br>推薦真正啱你用嘅護膚同健康產品。</p>
+  <h1>個人化美妝喜好設定</h1>
+  <p>話我哋知你嘅膚質、要避開嘅成分同人生階段，<br>我哋就可以幫你過濾走唔啱用嘅護膚同化妝品。</p>
   <div class="progress"><i id="pg"></i></div>
 </header>
 
@@ -115,7 +123,7 @@ summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--sub)}
       <input type="checkbox" id="consent">
       <div>
         <b>我同意 HKTVmall 用以上資料推薦合適貨品</b>
-        <small>用途：按你家庭狀況（例如有小朋友、懷孕、有寵物）篩選合適成分同產品，並用於個人化推薦。資料只存於 HKTVmall 資料平台，不會外傳。你可以隨時要求更正或刪除。</small>
+        <small>用途：按你膚質、成分禁忌同人生階段篩選合適美妝護膚產品，並用於個人化推薦。資料只存於 HKTVmall 資料平台，不會外傳。你可以隨時要求更正或刪除。</small>
         <div class="cref" id="cref">同意紀錄：<span>FORM-2026-</span></div>
       </div>
     </div>
@@ -140,9 +148,9 @@ summary{cursor:pointer;font-size:13px;font-weight:700;color:var(--sub)}
 <script>
 
 // ===================== DEMO 模式：本地驗證 + 本地儲存 =====================
-const VOCAB = {"_note": "Local mirror of merce-recom-engine.prefs_share.tag_vocab. Source of truth = BigQuery; this file is only for offline validation in the POC. Keep in sync via `python3 declare.py --sync-vocab`.", "version": "2026-11-11", "kinds": {"child": {"label_zh": "有小朋友", "values": ["男", "女", "未知"], "date_meaning": "出世日", "multi": true, "ref_date_required": true, "beauty_pitch": "小朋友護膚／防曬要溫和配方"}, "pet": {"label_zh": "有（物種）", "values": ["貓", "狗", "龜", "魚", "鳥", "兔", "倉鼠", "其他"], "date_meaning": "出世日", "multi": true, "ref_date_required": true, "beauty_pitch": "寵物家庭留意致敏原同無香配方"}, "pregnancy": {"label_zh": "懷孕／準備迎接BB", "values": null, "date_meaning": "預產期", "multi": false, "ref_date_required": true, "beauty_pitch": "避開 Retinol／高濃度酸類，揀孕婦適用"}, "ttc": {"label_zh": "備孕", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "備孕期成分把關"}, "elder": {"label_zh": "有長者／照顧需要的成員", "values": null, "date_meaning": "出世日", "multi": true, "ref_date_required": true, "beauty_pitch": "長者皮膚薄，揀滋潤低刺激"}, "chronic_monitor": {"label_zh": "家中有人需要三高監測", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "健康監測相關用品"}, "medical_nutrition": {"label_zh": "家中有人需要醫療營養", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "醫療營養補充"}, "hearing": {"label_zh": "有助聽器使用者", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "助聽器護理用品"}, "moving": {"label_zh": "搬屋／裝修", "values": null, "date_meaning": "搬屋日", "multi": false, "ref_date_required": true, "beauty_pitch": "新居收納同家居清潔"}, "owns": {"label_zh": "有（電器）", "values": ["洗碗碟機"], "date_meaning": null, "multi": true, "ref_date_required": false, "beauty_pitch": "家電耗材配對"}}, "sources": ["staff_call", "store", "app_form", "survey", "cs_chat"], "statuses": ["active", "removed", "none"], "precisions": ["day", "month", "year"], "sensitive_kinds": ["pregnancy", "chronic_monitor", "medical_nutrition", "hearing"]};
+const VOCAB = {"_note": "Local mirror of merce-recom-engine.prefs_share.tag_vocab. Source of truth = BigQuery; this file is only for offline validation in the POC. Keep in sync via `python3 declare.py --sync-vocab`.", "version": "2026-11-11", "kinds": {"child": {"label_zh": "有小朋友", "values": ["男", "女", "未知"], "date_meaning": "出世日", "multi": true, "ref_date_required": true, "beauty_pitch": "幫小朋友揀溫和、無香、高 SPF 防曬"}, "pet": {"label_zh": "有（物種）", "values": ["貓", "狗", "龜", "魚", "鳥", "兔", "倉鼠", "其他"], "date_meaning": "出世日", "multi": true, "ref_date_required": true, "beauty_pitch": "寵物家庭：無香、低致敏配方"}, "pregnancy": {"label_zh": "懷孕／準備迎接BB", "values": null, "date_meaning": "預產期", "multi": false, "ref_date_required": true, "beauty_pitch": "避開 Retinol、高濃度 AHA/BHA、部分香精"}, "ttc": {"label_zh": "備孕", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "備孕期成分先幫你把關"}, "elder": {"label_zh": "有長者／照顧需要的成員", "values": null, "date_meaning": "出世日", "multi": true, "ref_date_required": true, "beauty_pitch": "長者皮膚薄：滋潤、低刺激、易吸收"}, "chronic_monitor": {"label_zh": "家中有人需要三高監測", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "健康監測相關用品"}, "medical_nutrition": {"label_zh": "家中有人需要醫療營養", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "醫療營養補充"}, "hearing": {"label_zh": "有助聽器使用者", "values": null, "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "助聽器護理用品"}, "moving": {"label_zh": "搬屋／裝修", "values": null, "date_meaning": "搬屋日", "multi": false, "ref_date_required": true, "beauty_pitch": "新居收納同家居清潔"}, "owns": {"label_zh": "有（電器）", "values": ["洗碗碟機"], "date_meaning": null, "multi": true, "ref_date_required": false, "beauty_pitch": "家電耗材配對"}}, "proposed_kinds": {"_note": "Beauty 專屬類別提案 — 未經數據組批准，唔可以寫入 customer_declared。批准後整段搬入 kinds。", "skin_type": {"label_zh": "膚質", "values": ["乾性", "油性", "混合性", "中性", "敏感肌", "唔清楚"], "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "揀啱質地：乾性要油潤、油性要清爽", "replaces_derived": ["skincare_type"]}, "skin_concern": {"label_zh": "皮膚關注", "values": ["暗瘡粉刺", "色斑", "皺紋細紋", "毛孔粗大", "泛紅", "乾燥脫皮", "濕疹"], "date_meaning": null, "multi": true, "ref_date_required": false, "beauty_pitch": "直接對應成分：水楊酸、維C、胜肽、積雪草", "replaces_derived": []}, "ingredient_avoid": {"label_zh": "要避開嘅成分", "values": ["香料", "酒精", "Paraben／MIT", "AHA／BHA 酸類", "Retinol", "矽靈"], "date_meaning": null, "multi": true, "ref_date_required": false, "beauty_pitch": "敏感肌最重要嘅一格：過濾成分表", "replaces_derived": []}, "post_treatment": {"label_zh": "醫美／療程後", "values": ["雷射", "果酸煥膚", "微針", "高能量療程"], "date_meaning": "療程日", "multi": true, "ref_date_required": false, "beauty_pitch": "療程後 2 週要極簡修復，避開活性成分", "replaces_derived": []}, "hair_concern": {"label_zh": "頭髮／頭皮", "values": ["染髮", "頭皮敏感", "脫髮", "頭皮屑", "電燙"], "date_meaning": null, "multi": true, "ref_date_required": false, "beauty_pitch": "染燙後修護、頭皮敏感要無硫酸鹽", "replaces_derived": []}, "makeup_tone": {"label_zh": "底妝色調", "values": ["冷調", "暖調", "中性調", "唔清楚"], "date_meaning": null, "multi": false, "ref_date_required": false, "beauty_pitch": "粉底色號同胭脂色系推薦", "replaces_derived": []}}, "sources": ["staff_call", "store", "app_form", "survey", "cs_chat"], "statuses": ["active", "removed", "none"], "precisions": ["day", "month", "year"], "sensitive_kinds": ["pregnancy", "chronic_monitor", "medical_nutrition", "hearing"]};
 const DEMO_ROWS = [];   // 本次 session 寫入嘅行（append-only）
-const MEM = {};         // customer -> rows（sessionStorage 唔可用時嘅 fallback）
+const MEM = {};         // sessionStorage 唔可用時嘅 fallback
 
 function storeRows(customer, rows){
   DEMO_ROWS.push(...rows);
@@ -163,19 +171,21 @@ function rowsFor(customer){
 
 function ageToRefDate(age, unit){
   const d=new Date(); const n=Number(age);
-  if(isNaN(n) || n<0) throw new Error("年齡唔可以負數");
+  if(isNaN(n) || n<0) throw new Error("age cannot be negative");
   const p2=x=>String(x).padStart(2,"0");
+  const asMonth=(back)=>{
+    const m=new Date(d.getFullYear(), d.getMonth()-back, 1);
+    return [m.getFullYear()+"-"+p2(m.getMonth()+1)+"-01", "month"];
+  };
   if(unit==="year" || unit==="歲"){
     const total=n*12;
     if(Math.abs(total-Math.round(total))<1e-9 && Math.round(total)%12===0){
       const y=new Date(d.getFullYear()-Math.round(total)/12, d.getMonth(), 1);
       return [y.getFullYear()+"-"+p2(y.getMonth()+1)+"-01", "year"];
     }
-    const m=new Date(d.getFullYear(), d.getMonth()-Math.round(total), 1);
-    return [m.getFullYear()+"-"+p2(m.getMonth()+1)+"-01", "month"];
+    return asMonth(Math.round(total));
   }
-  const m=new Date(d.getFullYear(), d.getMonth()-Math.round(n), 1);
-  return [m.getFullYear()+"-"+p2(m.getMonth()+1)+"-01", "month"];
+  return asMonth(Math.round(n));
 }
 
 const UUID_RE=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -184,8 +194,8 @@ function uuid(){
   return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,c=>{
     const r=Math.random()*16|0, v=c==="x"?r:(r&0x3|0x8); return v.toString(16);});
 }
-function pad(n){return String(n).padStart(2,"0");}
-function nowStamp(){const d=new Date();return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+" "+pad(d.getHours())+":"+pad(d.getMinutes());}
+function pad2(n){return String(n).padStart(2,"0");}
+function nowStamp(){const d=new Date();return d.getFullYear()+"-"+pad2(d.getMonth()+1)+"-"+pad2(d.getDate())+" "+pad2(d.getHours())+":"+pad2(d.getMinutes());}
 
 function validateRow(r){
   const e=[];
@@ -240,13 +250,10 @@ function effectiveOf(customer){
   const latest={};
   rows.forEach(r=>{ latest[r.kind+"|"+(r.subject_id||"")]=r; });
   const today=new Date();
-  const LAB={child:"小朋友",pet:"寵物",elder:"長者",owns:"電器",pregnancy:"懷孕／準備迎接BB",
-             ttc:"備孕",chronic_monitor:"三高監測",medical_nutrition:"醫療營養",
-             hearing:"助聽器",moving:"搬屋／裝修"};
   const out=[];
   Object.values(latest).forEach(r=>{
     if(r.status!=="active") return;
-    const item={kind:r.kind,label:LAB[r.kind]||r.kind,value:r.value||null,subject_id:r.subject_id||null,
+    const item={kind:r.kind,label:labelOf(r.kind),value:r.value||null,subject_id:r.subject_id||null,
       source:"declared",say_to_customer:VOCAB.sensitive_kinds.indexOf(r.kind)<0,
       ref_date:r.ref_date||null,ref_date_precision:r.ref_date_precision||null,age_months:null};
     if(r.ref_date){
@@ -261,7 +268,7 @@ function effectiveOf(customer){
 
 function localDeclare(body){
   const errors=[], rows=[];
-  if(!body.items || !body.items.length) errors.push("冇任何資料項");
+  if(!body.items || !body.items.length) errors.push("no items");
   body.items.forEach((it,i)=>{
     const r={declaration_id:uuid(),customer:body.customer,kind:it.kind,subject_id:it.subject_id||null,
       value:it.value||null,status:it.status||"active",declared_at:it.declared_at||nowStamp(),
@@ -288,17 +295,44 @@ function localDeclare(body){
 }
 // =================== end DEMO mode ===================
 
+// kind spec: group / proposed（proposed = 未經 tag_vocab 批准，唔會寫入 BQ）
 const KINDS = [
-  {kind:"child", ico:"👶", label:"有小朋友", sub:"護膚防曬要溫和配方", values:["男","女","未知"], date:"出世日", multi:true, type:"age"},
-  {kind:"pet", ico:"🐱", label:"有養寵物", sub:"無香、低致敏配方", values:["貓","狗","龜","魚","鳥","兔","倉鼠","其他"], date:"出世日", multi:true, type:"age"},
-  {kind:"pregnancy", ico:"🤰", label:"懷孕／準備迎接BB", sub:"避開 Retinol 同高濃度酸類", values:null, date:"預產期", multi:false, type:"date"},
-  {kind:"ttc", ico:"🌱", label:"備孕中", sub:"成分先幫你把關", values:null, date:null, multi:false, type:"none"},
-  {kind:"elder", ico:"🧓", label:"有長者／需要照顧的家人", sub:"滋潤低刺激", values:null, date:"出世日", multi:true, type:"age"},
-  {kind:"chronic_monitor", ico:"🩺", label:"家人需要三高監測", sub:"居家健康監測", values:null, date:null, multi:false, type:"none"},
-  {kind:"medical_nutrition", ico:"🥛", label:"家人需要醫療營養", sub:"營養補充配對", values:null, date:null, multi:false, type:"none"},
-  {kind:"hearing", ico:"👂", label:"有助聽器使用者", sub:"助聽器護理用品", values:null, date:null, multi:false, type:"none"},
-  {kind:"moving", ico:"📦", label:"準備搬屋／裝修", sub:"新居收納同清潔", values:null, date:"搬屋日", multi:false, type:"date"},
-  {kind:"owns", ico:"🍽️", label:"有洗碗碟機", sub:"家電耗材配對", values:["洗碗碟機"], date:null, multi:true, type:"none"}
+  // ---- A. 皮膚 & 成分 ----
+  {kind:"skin_type", group:"skin", proposed:true, ico:"🧴", label:"我嘅膚質",
+   sub:"乾性／油性／混合／敏感肌", values:["乾性","油性","混合性","中性","敏感肌","唔清楚"], date:null, multi:false, type:"none"},
+  {kind:"skin_concern", group:"skin", proposed:true, ico:"🎯", label:"最想改善嘅皮膚問題",
+   sub:"暗瘡、色斑、皺紋、毛孔、泛紅…", values:["暗瘡粉刺","色斑","皺紋細紋","毛孔粗大","泛紅","乾燥脫皮","濕疹"], date:null, multi:true, mv:true, type:"none"},
+  {kind:"ingredient_avoid", group:"skin", proposed:true, ico:"🚫", label:"要避開嘅成分",
+   sub:"香料、酒精、酸類、Retinol…", values:["香料","酒精","Paraben／MIT","AHA／BHA 酸類","Retinol","矽靈"], date:null, multi:true, mv:true, type:"none"},
+
+  // ---- B. 頭髮 & 彩妝 ----
+  {kind:"hair_concern", group:"hair", proposed:true, ico:"💇", label:"頭髮／頭皮狀況",
+   sub:"染髮、頭皮敏感、脫髮、頭皮屑", values:["染髮","頭皮敏感","脫髮","頭皮屑","電燙"], date:null, multi:true, mv:true, type:"none"},
+  {kind:"makeup_tone", group:"hair", proposed:true, ico:"💄", label:"底妝色調",
+   sub:"幫你揀粉底色號同胭脂色系", values:["冷調","暖調","中性調","唔清楚"], date:null, multi:false, type:"none"},
+
+  // ---- C. 人生階段 & 家庭（現有 tag_vocab）----
+  {kind:"pregnancy", group:"life", proposed:false, ico:"🤰", label:"懷孕中／準備迎接BB",
+   sub:"避開 Retinol、高濃度酸類、部分香精", values:null, date:"預產期", multi:false, type:"date"},
+  {kind:"ttc", group:"life", proposed:false, ico:"🌱", label:"備孕中",
+   sub:"成分先幫你把關", values:null, date:null, multi:false, type:"none"},
+  {kind:"child", group:"life", proposed:false, ico:"👶", label:"有小朋友",
+   sub:"溫和無香、小童防曬", values:["男","女","未知"], date:"出世日", multi:true, type:"age"},
+  {kind:"elder", group:"life", proposed:false, ico:"🧓", label:"同長者住／要照顧長者",
+   sub:"皮膚薄：滋潤低刺激、易吸收", values:null, date:"出世日", multi:true, type:"age"},
+  {kind:"pet", group:"life", proposed:false, ico:"🐱", label:"有養寵物",
+   sub:"無香、低致敏配方", values:["貓","狗","龜","魚","鳥","兔","倉鼠","其他"], date:"出世日", multi:true, type:"age"},
+
+  // ---- D. 療程後 ----
+  {kind:"post_treatment", group:"care", proposed:true, ico:"🩹", label:"做過醫美／煥膚療程",
+   sub:"療程後兩週要極簡修復", values:["雷射","果酸煥膚","微針","高能量療程"], date:"療程日", multi:true, type:"date"}
+];
+
+const GROUPS = [
+  {id:"skin", title:"皮膚 & 成分", sub:"最影響推薦準確度嘅三格"},
+  {id:"hair", title:"頭髮 & 彩妝", sub:"髮質同色調偏好"},
+  {id:"life", title:"人生階段 & 家庭", sub:"直接影響成分安全（現有 tag_vocab 類別）"},
+  {id:"care", title:"療程後護理", sub:"療程後唔可以照用活性成分"}
 ];
 
 // 同意紀錄號（POC：由前端產生；正式應由同意系統簽發）
@@ -307,23 +341,33 @@ document.querySelector("#cref span").textContent = CREf;
 
 const today = new Date().toISOString().slice(0,10);
 const cardsEl = document.getElementById("cards");
-const state = {};   // kind -> {on:bool, subs:[{value,age,ageUnit,ref_date,prec,note}]}
-const nSubs = k => KINDS.find(x=>x.kind===k).multi ? 2 : 1;
+const state = {};   // kind -> {on:bool, subs:[{value,age,ageUnit,ref_date,note}]}
+const NOUN = {child:"小朋友", pet:"寵物", elder:"長者", owns:"電器",
+              skin_concern:"問題", ingredient_avoid:"成分", hair_concern:"狀況", post_treatment:"療程"};
 
 function esc(s){return (s??"").toString().replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
 
-KINDS.forEach(k=>{
-  const el = document.createElement("div");
-  el.className="card"; el.dataset.kind=k.kind;
-  el.innerHTML = `
-    <div class="card-head" data-toggle>
-      <div class="ico">${k.ico}</div>
-      <div class="t"><b>${k.label}</b><span>${k.sub}</span></div>
-      <div class="sw"></div>
-    </div>
-    <div class="card-body" data-body></div>`;
-  cardsEl.appendChild(el);
-  el.querySelector("[data-toggle]").addEventListener("click", ()=>toggle(k.kind));
+GROUPS.forEach(g=>{
+  const items = KINDS.filter(k=>k.group===g.id);
+  if(!items.length) return;
+  const gh = document.createElement("div");
+  gh.className="group";
+  gh.innerHTML = `<h3>${g.title}</h3><div class="gsub">${g.sub}</div>`;
+  cardsEl.appendChild(gh);
+
+  items.forEach(k=>{
+    const el = document.createElement("div");
+    el.className="card"; el.dataset.kind=k.kind;
+    el.innerHTML = `
+      <div class="card-head" data-toggle>
+        <div class="ico">${k.ico}</div>
+        <div class="t"><b>${k.label}${k.proposed?'<span class="badge-new">待 vocab 批</span>':""}</b><span>${k.sub}</span></div>
+        <div class="sw"></div>
+      </div>
+      <div class="card-body" data-body></div>`;
+    cardsEl.appendChild(el);
+    el.querySelector("[data-toggle]").addEventListener("click", ()=>toggle(k.kind));
+  });
 });
 
 function toggle(kind){
@@ -332,19 +376,12 @@ function toggle(kind){
   const on = !card.classList.contains("on");
   card.classList.toggle("on", on);
   if(on && !state[kind]){
-    state[kind] = {on:true, subs:Array.from({length:spec.multi?1:1},()=>({value:"",age:"",ageUnit:"year",ref_date:"",prec:"day",note:""}))};
+    state[kind] = {on:true, subs:[{value:"",values:[],age:"",ageUnit:"year",ref_date:""}]};
     renderBody(kind);
   }
-  state[kind] = state[kind] || {};
+  state[kind] = state[kind] || {subs:[]};
   state[kind].on = on;
-  if(!on) expandSubjects(kind, 0);
   updateCount();
-}
-
-function expandSubjects(kind, n){
-  const card = document.querySelector(`.card[data-kind="${kind}"]`);
-  card.querySelectorAll(".sub-block").forEach((b,i)=>{ if(i>=n) b.remove(); });
-  if(state[kind]) state[kind].subs = state[kind].subs.slice(0,n);
 }
 
 function renderBody(kind){
@@ -353,14 +390,15 @@ function renderBody(kind){
   const body = card.querySelector("[data-body]");
   const st = state[kind];
   body.innerHTML = st.subs.map((s,i)=>subHTML(spec, s, i)).join("") +
-    (spec.multi && st.subs.length>1 ? "" : (spec.multi ? `<button class="addmore" data-add>+ 加多一個${spec.label.replace("有","")}</button>`:""));
+    ((spec.multi && !spec.mv) ? `<button class="addmore" data-add>+ 加多一個${NOUN[kind]||spec.label}</button>` : "");
   bind(kind);
 }
 
 function subHTML(spec, s, i){
-  const head = spec.multi ? `<div class="sub-head"><b>${({child:"小朋友",pet:"寵物",elder:"長者",owns:"電器"}[spec.kind]||spec.label)} #${i+1}</b>${i>0?'<button class="rm" data-rm>移除</button>':''}</div>` : "";
+  const head = spec.multi ? `<div class="sub-head"><b>${NOUN[spec.kind]||spec.label} #${i+1}</b>${i>0?'<button class="rm" data-rm>移除</button>':''}</div>` : "";
+  const sel = spec.mv ? (s.values||[]) : (s.value?[s.value]:[]);
   const pills = spec.values ? `<div class="pills" data-pills>${spec.values.map(v=>
-      `<div class="pill${s.value===v?" sel":""}" data-v="${esc(v)}">${esc(v)}</div>`).join("")}</div>` : "";
+      `<div class="pill${sel.indexOf(v)>=0?" sel":""}" data-v="${esc(v)}">${esc(v)}</div>`).join("")}</div>` : "";
   let dateUI = "";
   if(spec.type==="age"){
     dateUI = `<div class="field"><label class="lbl">幾大？（我哋會自動計出${spec.date}）</label>
@@ -371,7 +409,7 @@ function subHTML(spec, s, i){
           <option value="month"${s.ageUnit==="month"?" selected":""}>個月</option>
         </select>
       </div>
-      <div class="hint" data-ageshow>${s.age?`→ 會儲為 ${esc(guessDate(s.age,s.ageUnit))}`:"唔記得幾歲？直接填大約都可以（只影響推薦精確度）"}</div>
+      <div class="hint" data-ageshow>${s.age?`→ 會儲為 ${esc(guessDate(s.age,s.ageUnit))}`:"唔記得準確數字？填大約就可以"}</div>
     </div>`;
   } else if(spec.type==="date"){
     dateUI = `<div class="field"><label class="lbl">${spec.date}</label>
@@ -386,13 +424,12 @@ function localISO(dt){
   const p2 = n => String(n).padStart(2,"0");
   return dt.getFullYear()+"-"+p2(dt.getMonth()+1)+"-"+p2(dt.getDate());
 }
-
 function guessDate(age, unit){
   const d = new Date();
   const n = parseInt(age||0,10);
   if(!n && n!==0) return "";
   if(unit==="year"){
-    const y = new Date(d.getFullYear()-n, d.getMonth(), 1);   // 保留月份、日=1（同 python 一致）
+    const y = new Date(d.getFullYear()-n, d.getMonth(), 1);
     return localISO(y)+"（準確度：年）";
   }
   const m = new Date(d.getFullYear(), d.getMonth()-n, 1);
@@ -405,25 +442,35 @@ function bind(kind){
   card.querySelectorAll("[data-sub]").forEach(block=>{
     const i = +block.dataset.sub;
     block.querySelectorAll("[data-v]").forEach(p=>p.addEventListener("click",()=>{
-      block.querySelectorAll("[data-v]").forEach(x=>x.classList.remove("sel"));
-      p.classList.add("sel"); st.subs[i].value = p.dataset.v;
+      const spec = KINDS.find(x=>x.kind===kind);
+      if(spec.mv){
+        const arr = st.subs[i].values = st.subs[i].values || [];
+        const v = p.dataset.v, at = arr.indexOf(v);
+        if(at>=0){ arr.splice(at,1); p.classList.remove("sel"); }
+        else { arr.push(v); p.classList.add("sel"); }
+        updateCount();
+      } else {
+        block.querySelectorAll("[data-v]").forEach(x=>x.classList.remove("sel"));
+        p.classList.add("sel"); st.subs[i].value = p.dataset.v;
+      }
     }));
     const age = block.querySelector("[data-age]");
     if(age) age.addEventListener("input",()=>{
       st.subs[i].age = age.value;
       const show = block.querySelector("[data-ageshow]");
-      if(show) show.textContent = age.value ? `→ 會儲為 ${guessDate(age.value, st.subs[i].ageUnit)}` : "唔記得幾歲？直接填大約都可以";
+      if(show) show.textContent = age.value ? `→ 會儲為 ${guessDate(age.value, st.subs[i].ageUnit)}` : "唔記得準確數字？填大約就可以";
     });
     const unit = block.querySelector("[data-unit]");
     if(unit) unit.addEventListener("change",()=>{ st.subs[i].ageUnit = unit.value;
       const show = block.querySelector("[data-ageshow]");
       if(show && st.subs[i].age) show.textContent = `→ 會儲為 ${guessDate(st.subs[i].age, unit.value)}`; });
     const dt = block.querySelector("[data-date]");
-    if(dt) dt.addEventListener("change",()=>{ st.subs[i].ref_date = dt.value; const ds=block.querySelector("[data-dateshow]"); if(ds) ds.textContent = dt.value?("已選："+dt.value):""; });
+    if(dt) dt.addEventListener("change",()=>{ st.subs[i].ref_date = dt.value;
+      const ds=block.querySelector("[data-dateshow]"); if(ds) ds.textContent = dt.value?("已選："+dt.value):""; });
   });
   const add = card.querySelector("[data-add]");
   if(add) add.addEventListener("click",()=>{
-    st.subs.push({value:"",age:"",ageUnit:"year",ref_date:"",prec:"day",note:""});
+    st.subs.push({value:"",values:[],age:"",ageUnit:"year",ref_date:""});
     renderBody(kind); updateCount();
   });
   card.querySelectorAll("[data-rm]").forEach(b=>b.addEventListener("click",e=>{
@@ -434,7 +481,11 @@ function bind(kind){
 
 function updateCount(){
   let n=0;
-  Object.entries(state).forEach(([k,v])=>{ if(v.on) n += Math.max(1, v.subs.length); });
+  Object.entries(state).forEach(([k,v])=>{
+    if(!v.on) return;
+    const spec = KINDS.find(x=>x.kind===k);
+    n += (spec && spec.mv) ? Math.max(1,(v.subs[0].values||[]).length) : Math.max(1, v.subs.length);
+  });
   document.getElementById("cnt").textContent = n;
   const filled = Object.entries(state).filter(([k,v])=>v.on).length;
   document.getElementById("pg").style.width = Math.min(100, filled*10) + "%";
@@ -445,15 +496,18 @@ function buildItems(){
   Object.entries(state).forEach(([kind,v])=>{
     if(!v.on) return;
     const spec = KINDS.find(x=>x.kind===kind);
-    if(spec.multi){
-      v.subs.forEach((s,i)=>items.push({kind, subject_id:`${kind}_${i+1}`, value:s.value||null,
-        age:s.age||null, age_unit:s.ageUnit, ref_date:s.ref_date||null,
-        ref_date_precision: s.ref_date? "day":null}));
-    } else {
-      const s=v.subs[0]||{};
-      items.push({kind, value:s.value||null, age:s.age||null, age_unit:s.ageUnit,
-        ref_date:s.ref_date||null, ref_date_precision: s.ref_date? "day":null});
+    if(spec.mv){
+      (v.subs[0].values||[]).forEach((val,idx)=>items.push({kind,
+        subject_id: `${kind}_${idx+1}`, value: val, proposed: !!spec.proposed}));
+      return;
     }
+    v.subs.forEach((s,i)=>{
+      items.push({kind,
+        subject_id: spec.multi ? `${kind}_${i+1}` : null,
+        value: s.value||null, age: s.age||null, age_unit: s.ageUnit,
+        ref_date: s.ref_date||null, ref_date_precision: s.ref_date? "day":null,
+        proposed: !!spec.proposed});
+    });
   });
   return items;
 }
@@ -467,13 +521,22 @@ document.getElementById("submit").addEventListener("click", async()=>{
   if(!customer) errs.push("請先填會員號碼");
   if(!consent) errs.push("請先勾同意推薦用途");
   if(!items.length) errs.push("請最少選一項");
+
+  const approved = items.filter(i=>!i.proposed);
+  const pending  = items.filter(i=>i.proposed);
   if(errs.length) return showErrors(errs);
 
   const btn=document.getElementById("submit"); btn.disabled=true; btn.textContent="儲存中…";
-  await new Promise(r=>setTimeout(r,300));
-  const js = localDeclare({customer,consent_ref:CREf,source:"app_form",recorded_by:"beauty-prefs-web",items});
+  let js;
+  if(approved.length){
+    const js0 = localDeclare({customer,consent_ref:CREf,source:"app_form",recorded_by:"beauty-prefs-web",items:approved});
+    if(!js0.ok){ showErrors(js0.errors||["儲存失敗"]); btn.disabled=false; btn.textContent="儲存喜好"; return; }
+    js = js0;
+  } else {
+    js = {ok:true, written:0, mode:"冇寫入（全部待 tag_vocab 批准）", rows:[], insert_all:{rows:[]}, effective:[]};
+  }
   btn.disabled=false; btn.textContent="儲存喜好";
-  if(!js.ok){ showErrors(js.errors||["儲存失敗"]); return; }
+  js.pending = pending;
   showSuccess(js, customer);
 });
 
@@ -490,20 +553,36 @@ function fmtAge(m){
   return m+"個月";
 }
 
+function specOf(kind){
+  return (typeof VOCAB!=="undefined" && (VOCAB.kinds[kind]||VOCAB.proposed_kinds[kind])) || {};
+}
+function labelOf(kind){
+  const s=specOf(kind);
+  return s.label_zh || kind;
+}
+
 function showSuccess(js, customer){
   const prof = js.effective||[];
   const tags = prof.map(p=>`<span class="tag${p.say_to_customer?"":" quiet"}" title="${p.say_to_customer?"可以喺對話／推廣直接講":"只可以用嚟推薦，唔可以講出口"}">
-      ${esc(p.label)}${p.value?"："+esc(p.value):""}${p.age_months!=null?" · "+fmtAge(p.age_months):""}${p.due_in_months!=null?" · 預產期 "+esc(p.ref_date):""}</span>`).join("");
+      ${esc(p.label)}${p.value?"："+esc(p.value):""}${p.age_months!=null?" · "+fmtAge(p.age_months):""}${p.due_in_months!=null?" · "+esc(p.ref_date):""}</span>`).join("");
+
+  const pend = (js.pending||[]);
+  const pendHTML = pend.length ? `
+    <p class="sec-title" style="margin:18px 0 8px;color:#B45309">待 tag_vocab 批准（今次唔會寫入）</p>
+    <div>${pend.map(p=>`<span class="tag pending">${esc(labelOf(p.kind))}${p.value?"："+esc(p.value):""}</span>`).join("")}</div>
+    <p style="color:#6B7280;font-size:12px;margin:6px 0 0">呢 ${pend.length} 項係新提案類別，數據組批准並加入 <code>tag_vocab</code> 之後先入得 <code>customer_declared</code>。今日照樣記住你嘅選擇，唔會偷寫。</p>` : "";
+
   document.getElementById("sheetbox").innerHTML = `
     <div class="ok-ico">✓</div>
     <h2>已儲存，多謝你！</h2>
     <p style="color:#6B7280;font-size:13.5px;margin:0 0 14px">
-      寫入 <code>${esc(js.mode)}</code> · ${js.written} 行 · 每人每項一行，只加不删。<br>
+      寫入 <code>${esc(js.mode)}</code> · ${js.written? js.written+" 行 · 每人每項一行，只加不删。":"今次冇寫入 BQ（所選類別全部待批）。"}<br>
       ${js.detail?`<span style="color:#E4483F">BQ 未通：${esc(js.detail.slice(0,120))}（已寫本地 mirror 驗證）</span>`:""}
     </p>
     <p class="sec-title" style="margin-bottom:8px">AI 之後會見到嘅標籤（profiles_effective）</p>
     <div>${tags||'<span style="color:#6B7280">（無）</span>'}</div>
     <p style="color:#6B7280;font-size:12px;margin:12px 0 0">灰色 = <code>say_to_customer=false</code>，只可用於推薦，不可在對話／推廣文字說出口。</p>
+    ${pendHTML}
     <details><summary>睇寫入嘅資料（每件事一行）</summary>
       <pre>${esc(JSON.stringify(js.rows,null,2))}</pre></details>
     <details><summary>睇 BigQuery insertAll payload</summary>
